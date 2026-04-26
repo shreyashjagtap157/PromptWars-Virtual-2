@@ -6,17 +6,21 @@ import Link from 'next/link';
 export default function DashboardPage() {
   const { region, language, theme, setTheme, guideProgress } = useStore();
   const [nextStep, setNextStep] = useState<any>(null);
+  const [totalStepCount, setTotalStepCount] = useState<number>(0);
 
-  // Compute progress
-  const totalSteps = Object.keys(guideProgress).length || 0;
+  // Compute progress using the actual total count from backend
   const completedSteps = Object.values(guideProgress).filter(s => s === 'completed').length;
-  const progressPct = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+  
+  // Use the fetched total count if available, otherwise fallback to the number of unique steps in progress
+  const displayTotal = totalStepCount || Object.keys(guideProgress).length || 0;
+  const progressPct = displayTotal > 0 ? Math.round((completedSteps / displayTotal) * 100) : 0;
+  
   const circumference = 2 * Math.PI * 52;
   const offset = circumference - (progressPct / 100) * circumference;
 
-  // Fetch current active step from backend for the "Continue" card
+  // Fetch current active step and total steps from backend
   useEffect(() => {
-    async function fetchActiveStep() {
+    async function fetchProcessData() {
       try {
         const queryRegion = region?.country || '';
         const url = queryRegion ? `/api/process?region=${encodeURIComponent(queryRegion)}` : `/api/process`;
@@ -24,11 +28,15 @@ export default function DashboardPage() {
         if (!res.ok) return;
         const data = await res.json();
         const steps = data.steps || [];
+        
+        // Accurate total count for progress bar
+        setTotalStepCount(steps.length);
+        
         const active = steps.find((s: any) => guideProgress[s.id] !== 'completed');
         setNextStep(active || null);
       } catch { /* silently fail */ }
     }
-    fetchActiveStep();
+    fetchProcessData();
   }, [region?.country, guideProgress]);
 
   const regionLabel = region ? `${region.country}, ${region.state}` : 'No region set';
@@ -42,8 +50,8 @@ export default function DashboardPage() {
           <div>
             <h1 className="font-h1 text-4xl md:text-5xl font-bold mb-2">Welcome back!</h1>
             <p className="font-body-lg text-primary-fixed opacity-90 max-w-lg mb-6">
-              {totalSteps > 0
-                ? `You've completed ${completedSteps} of ${totalSteps} steps. Keep going!`
+              {displayTotal > 0
+                ? `You've completed ${completedSteps} of ${displayTotal} steps. Keep going!`
                 : 'Select a region below to begin your personalized election guide.'}
             </p>
             <div className="flex flex-wrap gap-3">
@@ -126,7 +134,7 @@ export default function DashboardPage() {
                        </div>
                        <div>
                          <h3 className="font-body-md font-bold text-on-surface">Step Completed</h3>
-                         <p className="font-body-md text-sm text-on-surface-variant mt-0.5">Marked &quot;{stepId}&quot; as done</p>
+                         <p className="font-body-md text-sm text-on-surface-variant mt-0.5">Completed {stepId}</p>
                        </div>
                      </div>
                    ))
@@ -202,7 +210,7 @@ export default function DashboardPage() {
              <h3 className="font-h3 text-lg font-bold text-on-surface mb-2">Need help?</h3>
              <p className="font-body-md text-sm text-on-surface-variant mb-6">Contact our support team or browse our FAQs to get answers.</p>
              <button className="bg-surface text-primary border border-outline-variant font-button font-bold text-sm hover:bg-surface-container px-6 py-2.5 rounded-lg transition-colors w-full shadow-sm shadow-black/5">
-               Visit Help Center
+                Visit Help Center
              </button>
           </div>
         </div>
