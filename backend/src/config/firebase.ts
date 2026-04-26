@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 try {
   // Utilizing default configuration; expects GOOGLE_APPLICATION_CREDENTIALS to be set in environment
   admin.initializeApp({
-    projectId: process.env.FIREBASE_PROJECT_ID || 'civicguide-demo'
+    projectId: process.env.FIREBASE_PROJECT_ID || 'promptwars-virtual-2'
   });
   console.log('Firebase Admin initialized');
 } catch (error) {
