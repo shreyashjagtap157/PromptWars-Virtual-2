@@ -18,18 +18,19 @@ export class ProcessService {
             return {
                 mode: "region-specific",
                 steps: [
-                    { id: "in-1", title: "Search Electoral Roll", description: "Verify your name is present in the latest electoral roll on voters.eci.gov.in. If not found, you cannot vote even with an ID card.", order: 1 },
-                    { id: "in-2", title: "Download Voter Slip", description: "Download your digital voter information slip which contains your polling station name, room number, and serial number.", order: 2 },
-                    { id: "in-3", title: "Verify Digital EPIC", description: "Ensure you have your digital Voter ID (e-EPIC) downloaded on your phone or a physical copy ready.", order: 3 },
-                    { id: "in-4", title: "Locate Polling Station", description: "Double-check the exact address of your designated polling booth. Use maps to plan your route to avoid morning crowds.", order: 4 },
-                    { id: "in-5", title: "Research Candidates (KYC)", description: "Use the ECI 'Know Your Candidate' app to view the background, assets, and criminal records (if any) of candidates in your area.", order: 5 },
-                    { id: "in-6", title: "Entry & Identity Check", description: "At the booth, show your identity proof to the First Polling Officer. They will call out your name to verify it against the list.", order: 6 },
-                    { id: "in-7", title: "Signature & Ink marking", description: "The Second Polling Officer will apply indelible ink to your left index finger and record your signature in the register (Form 17A).", order: 7 },
-                    { id: "in-8", title: "EVM Preparation", description: "The Third Polling Officer will take your voter slip and press the 'Ballot' button on the Control Unit to activate the voting machine.", order: 8 },
-                    { id: "in-9", title: "Casting the Ballot", description: "In the private voting compartment, press the blue button next to the name and symbol of your chosen candidate on the EVM.", order: 9 },
-                    { id: "in-10", title: "VVPAT Confirmation", description: "Immediately check the VVPAT machine's transparent window. It will show a printed slip with your candidate's name and symbol for 7 seconds before falling into the box.", order: 10 },
-                    { id: "in-11", title: "Polling Station Exit", description: "Collect any personal belongings and follow the marked exit path to ensure a smooth flow for other voters.", order: 11 },
-                    { id: "in-12", title: "Civic Sharing", description: "While results are secret, sharing your 'Inked Finger' photo encourages others in your community to participate in the democratic process.", order: 12 }
+                    { id: "in-1", title: "Search Electoral Roll", description: "Visit voters.eci.gov.in or use the Voter Helpline App to verify your name, Part Number, and Serial Number in the latest electoral roll.", order: 1 },
+                    { id: "in-2", title: "Download Voter Information Slip", description: "Collect your official voter information slip from the ECI portal. This slip contains the room number and booth details for your polling station.", order: 2 },
+                    { id: "in-3", title: "Verify Digital EPIC (e-EPIC)", description: "Ensure you have your digital Voter ID (e-EPIC) downloaded or a physical EPIC card ready. 12 other photo IDs (like Aadhar) are also allowed.", order: 3 },
+                    { id: "in-4", title: "Locate Your Polling Station", description: "Confirm the exact site address (usually a local school or public office). Plan your route to arrive early to avoid long queues.", order: 4 },
+                    { id: "in-5", title: "Research Candidates (KYC)", description: "Use the 'Know Your Candidate' (KYC) app to study the educational background, financial assets, and criminal histories of candidates in your constituency.", order: 5 },
+                    { id: "in-6", title: "Entry & Identity Verification", description: "Proceed to the First Polling Officer. They will verify your identity against the marked copy of the electoral roll while calling out your name.", order: 6 },
+                    { id: "in-7", title: "Register Signing (Form 17A)", description: "The Second Polling Officer will ask you to sign the Register of Voters (Form 17A) or record your thumb impression.", order: 7 },
+                    { id: "in-8", title: "Indelible Ink Marking", description: "The Second Polling Officer will apply indelible ink on your left-hand index finger, marking your participation in the democracy.", order: 8 },
+                    { id: "in-9", title: "EVM Activation", description: "The Third Polling Officer will take your voter slip and activate the Electronic Voting Machine (EVM) by pressing the 'Ballot' button on the Control Unit.", order: 9 },
+                    { id: "in-10", title: "Cast Your Vote (EVM)", description: "In the private booth, press the blue button next to the name and symbol of your chosen candidate/party on the EVM Ballot Unit.", order: 10 },
+                    { id: "in-11", title: "VVPAT Verification", description: "Check the VVPAT machine's transparent window. It will display a printed slip with your candidate's name and serial for 7 seconds before it falls into the box.", order: 11 },
+                    { id: "in-12", title: "Station Exit Flow", description: "Collect your ID if you left it at any counter and follow the exit arrows to maintain a smooth queue for other voters.", order: 12 },
+                    { id: "in-13", title: "Selfie Point / Civic Pride", description: "While the vote is secret, sharing a photo of your inked finger (without the ballot) at the station's selfie point encourages community voting.", order: 13 }
                 ]
             };
         }
@@ -38,16 +39,16 @@ export class ProcessService {
             return {
                 mode: "region-specific",
                 steps: [
-                    { id: "us-1", title: "Verify Voter Registration", description: "Confirm your registration status with your state's Board of Elections. Deadlines vary but are usually 30 days before Election Day.", order: 1 },
-                    { id: "us-2", title: "Review State Ballot Measures", description: "Beyond candidates, states often have specific propositions or tax measures. Read the legal text to understand what 'Yes' or 'No' truly means.", order: 2 },
-                    { id: "us-3", title: "Choose Your Voting Plan", description: "Decide if you will vote by mail (requires requesting a ballot early), use early in-person voting, or go to the polls on Election Day.", order: 3 },
-                    { id: "us-4", title: "Gather Required Identification", description: "Check if your state requires a Photo ID, a non-photo ID, or just a signature match. Prepare documents like your Driver's License or utility bill.", order: 4 },
-                    { id: "us-5", title: "Locate Your Polling Place", description: "Polling locations can change between elections. Verify your specific precinct address via official state web portals.", order: 5 },
-                    { id: "us-6", title: "Official Check-in", description: "Provide your name and address to the poll workers. They will verify your eligibility and provide your official ballot or activation card.", order: 6 },
-                    { id: "us-7", title: "Marking Your Ballot", description: "Use the provided pen to fill in the ovals on your paper ballot, or follow the touch-screen prompts on the digital voting machine.", order: 7 },
-                    { id: "us-8", title: "Ballot Review & Submission", description: "Review your selections one last time. Feed your paper ballot into the optical scanner until it is successfully accepted.", order: 8 },
-                    { id: "us-9", title: "Confirmation of Receipt", description: "Ensure the machine or official confirms your vote has been recorded. If a machine rejects your ballot, you are entitled to a fresh one.", order: 9 },
-                    { id: "us-10", title: "Participation Token", description: "Collect your 'I Voted' sticker and celebrate your contribution to the electoral process.", order: 10 }
+                    { id: "us-1", title: "Verify Voter Registration", description: "Check your status with your local county board of elections. Many states require registration at least 30 days before the election date.", order: 1 },
+                    { id: "us-2", title: "Review State Ballot Measures", description: "Examine sample ballots for local measures or propositions. Read the full text to understand legal implications of your vote.", order: 2 },
+                    { id: "us-3", title: "Select Your Voting Plan", description: "Decide if you will utilize Mail-in/Absentee voting, Early Voting centers, or show up at your polling place on Election Day.", order: 3 },
+                    { id: "us-4", title: "Gather Required Identification", description: "Verify state-specific ID laws. Some states require photo ID (DL, Passport), others allow non-photo ID (utility bill, bank statement).", order: 4 },
+                    { id: "us-5", title: "Locate Your Precinct Venue", description: "Polling locations can shift. Use your Secretary of State's website to find your authorized polling place or ballot drop box.", order: 5 },
+                    { id: "us-6", title: "Check-in & Verification", description: "Provide your information to poll workers. They will check your registration, have you sign the poll book, and provide your ballot.", order: 6 },
+                    { id: "us-7", title: "Complete Your Ballot", description: "In a private booth, use the provided pen to fill in your choices on the paper ballot or follow the touch-screen prompts on a DRE machine.", order: 7 },
+                    { id: "us-8", title: "Ballot Review", description: "Carefully review your selections. If you make a mistake on a paper ballot, you are entitled to a 'spoiled ballot' and a fresh one.", order: 8 },
+                    { id: "us-9", title: "Submit to Optical Scanner", description: "Feed your completed ballot into the secure optical scanner until it is successfully accepted and recorded.", order: 9 },
+                    { id: "us-10", title: "Collect 'I Voted' Sticker", description: "Pick up your participation sticker and celebrate your contribution to your local and national representation.", order: 10 }
                 ]
             };
         }
@@ -55,13 +56,13 @@ export class ProcessService {
         return {
             mode: "general",
             steps: [
-                { id: "gen-1", title: "Eligibility Check", description: "Confirm you meet age, citizenship, and residency requirements for your current jurisdiction.", order: 1 },
-                { id: "gen-2", title: "Registration Process", description: "Submit your voter registration form via the official government portal or local municipal office.", order: 2 },
-                { id: "gen-3", title: "Policy & Candidate Research", description: "Examine party manifestos, debate transcripts, and independent candidate analysis to make an informed decision.", order: 3 },
-                { id: "gen-4", title: "Logistics Planning", description: "Identify the date, time window, and location of your polling station. Arrange transportation or request a mail-in ballot if needed.", order: 4 },
-                { id: "gen-5", title: "Primary ID Preparation", description: "Secure the travel or identity documents required by law to gain entry to the voting area.", order: 5 },
-                { id: "gen-6", title: "Casting Secret Ballot", description: "Follow the instructions of electoral staff to cast your vote in private, ensuring no one sees your selection.", order: 6 },
-                { id: "gen-7", title: "Result Monitoring", description: "Stay tuned to certified election commission reports for the finalized and audited results of the vote.", order: 7 }
+                { id: "gen-1", title: "Eligibility Check", description: "Confirm you meet citizenship, age (18+), and residency requirements for your jurisdiction.", order: 1 },
+                { id: "gen-2", title: "Registration Process", description: "Complete and submit your registration documents before the official deadline in your area.", order: 2 },
+                { id: "gen-3", title: "Research Platforms", description: "Study candidate platforms, voting records, and party manifestos to align with your personal values.", order: 3 },
+                { id: "gen-4", title: "Identify Polling Venue", description: "Confirm the location and hours of operation for your polling station or the location of ballot drop boxes.", order: 4 },
+                { id: "gen-5", title: "Prepare Identification", description: "Assemble the specific identity documents required by law to gain entry to the voting facility.", order: 5 },
+                { id: "gen-6", title: "Cast the Ballot", description: "Follow local procedures to mark and submit your secret ballot in a secure and private manner.", order: 6 },
+                { id: "gen-7", title: "Monitor Official Results", description: "Follow certified government channels for the officially audited outcomes of the election process.", order: 7 }
             ]
         };
     }
