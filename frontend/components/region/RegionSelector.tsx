@@ -3,16 +3,44 @@ import React, { useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { useRouter } from 'next/navigation';
 
+const COUNTRIES: Record<string, { states: Record<string, string[]> }> = {
+  'US': {
+    states: {
+      'California': ['District 12', 'District 4', 'District 8'],
+      'New York': ['District 1', 'District 3'],
+      'Texas': ['District 5', 'District 10'],
+    }
+  },
+  'India': {
+    states: {
+      'Maharashtra': ['Mumbai', 'Pune', 'Nagpur'],
+      'Delhi': ['New Delhi', 'Central Delhi', 'South Delhi'],
+      'Karnataka': ['Bangalore North', 'Bangalore South', 'Mysore'],
+    }
+  },
+  'Canada': {
+    states: {
+      'Ontario': ['Toronto Centre', 'Ottawa South'],
+      'Quebec': ['Montreal', 'Quebec City'],
+    }
+  },
+};
+
 export function RegionSelector() {
   const { region, setRegion } = useStore();
   const router = useRouter();
   
-  const [selectedCountry, setSelectedCountry] = useState(region?.country || 'United States');
+  const [selectedCountry, setSelectedCountry] = useState(region?.country || '');
   const [selectedState, setSelectedState] = useState(region?.state || '');
   const [selectedDistrict, setSelectedDistrict] = useState(region?.district || '');
 
-  const handleContinue = () => {
-    setRegion({ country: selectedCountry, state: 'California', district: 'District 12' });
+  const countryData = selectedCountry ? COUNTRIES[selectedCountry] : null;
+  const states = countryData ? Object.keys(countryData.states) : [];
+  const districts = countryData && selectedState ? (countryData.states[selectedState] || []) : [];
+
+  const handleAutoDetect = () => {
+    // Simulate auto-detection defaulting to India
+    setRegion({ country: 'India', state: 'Maharashtra', district: 'Mumbai' });
     router.push('/guide');
   }
 
@@ -36,31 +64,16 @@ export function RegionSelector() {
             </div>
             <div>
               <h2 className="font-h3 text-h3 text-on-surface mb-1">Detect My Location</h2>
-              <p className="font-body-md text-body-md text-on-surface-variant">Use your device's location to quickly find your voting district.</p>
+              <p className="font-body-md text-body-md text-on-surface-variant">Use your device&apos;s location to quickly find your voting district.</p>
             </div>
           </div>
-          <button className="w-full bg-primary text-on-primary font-button text-button py-3 px-6 rounded-lg shadow-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2 relative overflow-hidden group">
+          <button
+            onClick={handleAutoDetect}
+            className="w-full bg-primary text-on-primary font-button text-button py-3 px-6 rounded-lg shadow-sm hover:bg-primary/90 transition-all flex items-center justify-center gap-2 relative overflow-hidden group">
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <span className="material-symbols-outlined text-[18px]">radar</span>
             Detect Location Automatically
           </button>
-          
-          {/* Suggested Region (Simulated State) */}
-          <div className="mt-6 pt-6 border-t border-outline-variant/50 animate-subtle-pulse">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
-              <span className="font-label-caps text-label-caps text-secondary uppercase">Location Detected</span>
-            </div>
-            <h3 className="font-body-lg text-body-lg text-on-surface font-semibold mb-2">We think you're in California, District 12. Is this correct?</h3>
-            <div className="flex gap-3 mt-4">
-              <button onClick={handleContinue} className="flex-1 bg-surface-variant text-on-surface-variant font-button text-button py-2.5 px-4 rounded-lg hover:bg-surface-variant/80 transition-colors border border-outline-variant/30 text-center">
-                Yes, Continue
-              </button>
-              <button className="flex-1 bg-transparent text-primary font-button text-button py-2.5 px-4 rounded-lg hover:bg-surface-container transition-colors border border-outline-variant text-center">
-                No, Choose Manually
-              </button>
-            </div>
-          </div>
         </div>
 
         <div className="flex items-center gap-4 py-2">
@@ -78,11 +91,10 @@ export function RegionSelector() {
               <div className="relative">
                 <select 
                   value={selectedCountry}
-                  onChange={(e) => setSelectedCountry(e.target.value)}
+                  onChange={(e) => { setSelectedCountry(e.target.value); setSelectedState(''); setSelectedDistrict(''); }}
                   className="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all shadow-sm">
-                  <option>United States</option>
-                  <option>Canada</option>
-                  <option>United Kingdom</option>
+                  <option disabled value="">Select Country</option>
+                  {Object.keys(COUNTRIES).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-on-surface-variant">
                   <span className="material-symbols-outlined">expand_more</span>
@@ -95,14 +107,13 @@ export function RegionSelector() {
               <div className="relative">
                 <select 
                   value={selectedState}
-                  onChange={(e) => setSelectedState(e.target.value)}
-                  className="w-full appearance-none bg-surface-container-lowest border border-outline-variant rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all shadow-sm">
+                  onChange={(e) => { setSelectedState(e.target.value); setSelectedDistrict(''); }}
+                  disabled={!selectedCountry}
+                  className={`w-full appearance-none border rounded-lg px-4 py-3 font-body-md text-body-md transition-all shadow-sm ${!selectedCountry ? 'bg-surface-container-low border-outline-variant/50 text-on-surface-variant opacity-70 cursor-not-allowed' : 'bg-surface-container-lowest border-outline-variant text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10'}`}>
                   <option disabled value="">Select State</option>
-                  <option>California</option>
-                  <option>New York</option>
-                  <option>Texas</option>
+                  {states.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-on-surface-variant">
+                <div className={`absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-on-surface-variant ${!selectedCountry ? 'opacity-70' : ''}`}>
                   <span className="material-symbols-outlined">expand_more</span>
                 </div>
               </div>
@@ -117,8 +128,7 @@ export function RegionSelector() {
                   disabled={!selectedState}
                   className={`w-full appearance-none border rounded-lg px-4 py-3 font-body-md text-body-md transition-all shadow-sm ${!selectedState ? 'bg-surface-container-low border-outline-variant/50 text-on-surface-variant opacity-70 cursor-not-allowed' : 'bg-surface-container-lowest border-outline-variant text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10'}`}>
                   <option disabled value="">Select District</option>
-                  {selectedState === 'California' && <option>District 12</option>}
-                  {selectedState === 'California' && <option>District 4</option>}
+                  {districts.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
                 <div className={`absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-on-surface-variant ${!selectedState ? 'opacity-70' : ''}`}>
                   <span className="material-symbols-outlined">expand_more</span>
@@ -136,7 +146,7 @@ export function RegionSelector() {
                <button 
                   onClick={handleManualSelect}
                   disabled={!selectedDistrict} 
-                  className="w-full bg-primary text-on-primary font-button text-button py-3 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
+                  className="w-full bg-primary text-on-primary font-button text-button py-3 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity hover:bg-primary/90">
                   Confirm Manual Selection
                </button>
             </div>
@@ -147,10 +157,10 @@ export function RegionSelector() {
       {/* Right Column: Visual Map Context */}
       <div className="lg:col-span-5">
         <div className="sticky top-24 bg-surface-container-low rounded-xl border border-outline-variant overflow-hidden h-[400px] lg:h-[600px] flex flex-col shadow-inner relative group">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-20 dark:opacity-10 grayscale mix-blend-multiply"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5"></div>
           <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 text-center">
             <div className="w-20 h-20 rounded-full bg-white shadow-lg flex items-center justify-center mb-6 relative">
-              <div className="absolute inset-0 rounded-full border-4 border-primary/20 animate-subtle-pulse scale-110"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-primary/20 animate-pulse scale-110"></div>
               <span className="material-symbols-outlined text-primary text-4xl">map</span>
             </div>
             <h3 className="font-h3 text-h3 text-on-surface mb-2">Regional Context</h3>

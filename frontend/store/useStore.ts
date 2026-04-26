@@ -18,23 +18,18 @@ interface AppState {
   setLanguage: (lang: string) => void;
   setTheme: (theme: 'dark' | 'light' | 'system') => void;
   updateGuideProgress: (stepId: string, status: 'pending' | 'active' | 'completed') => void;
+  resetGuideProgress: () => void;
 }
 
 export const useStore = create<AppState>((set) => ({
-  isLoggedIn: false, // UI mock only
+  isLoggedIn: false,
   region: null,
   language: 'en-US',
   theme: 'system',
-  guideProgress: {
-    'step-1': 'completed',
-    'step-2': 'active',
-    'step-3': 'pending',
-    'step-4': 'pending',
-    'step-5': 'pending',
-  },
+  guideProgress: {},
   
   setLogin: (status) => set({ isLoggedIn: status }),
-  setRegion: (region) => set({ region }),
+  setRegion: (region) => set({ region, guideProgress: {} }),
   setLanguage: (language) => set({ language }),
   setTheme: (theme) => {
     set({ theme });
@@ -52,4 +47,5 @@ export const useStore = create<AppState>((set) => ({
       [stepId]: status
     }
   })),
+  resetGuideProgress: () => set({ guideProgress: {} }),
 }))
