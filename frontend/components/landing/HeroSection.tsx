@@ -8,13 +8,13 @@ export function HeroSection() {
       
       <div className="max-w-4xl mx-auto text-center relative z-10">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high border border-outline-variant/50 mb-8 shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-secondary"></span>
-          <span className="font-label-caps text-label-caps text-on-surface-variant">2024 ELECTION CYCLE ACTIVE</span>
+          <span className="w-2 h-2 rounded-full bg-secondary animate-pulse-slow"></span>
+          <span className="font-label-caps text-label-caps text-on-surface-variant">2026 ELECTION CYCLE ACTIVE</span>
         </div>
         
         <h1 className="font-h1 text-h1 text-on-surface mb-6 leading-tight tracking-tight">
           Your Election Process,<br/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-surface-tint">Simplified.</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary drop-shadow-sm">Simplified.</span>
         </h1>
         
         <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto mb-10">
