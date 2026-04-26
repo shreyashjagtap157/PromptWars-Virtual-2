@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Navbar } from "@/components/layout/Navbar";
+import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "CivicGuide - Your Election Process, Simplified",
@@ -20,11 +21,13 @@ export default function RootLayout({
          <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-background text-on-background font-body-md antialiased selection:bg-primary selection:text-on-primary min-h-screen">
-        <Navbar />
-        <Sidebar />
-        <div className="pt-20 lg:pt-0 lg:ml-64 min-h-screen pb-xl w-full">
-          {children}
-        </div>
+        <Providers>
+          <Navbar />
+          <Sidebar />
+          <div className="pt-20 lg:pt-0 lg:ml-64 min-h-screen pb-xl w-full">
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );

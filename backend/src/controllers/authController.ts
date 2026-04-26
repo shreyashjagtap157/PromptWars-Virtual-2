@@ -3,29 +3,11 @@ import { AuthService } from '../services/AuthService';
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            res.status(400).json({ error: 'Email and password are required' });
-            return;
-        }
-        
-        const data = await AuthService.register(email, password);
-        res.json(data);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-             res.status(400).json({ error: 'Email and password are required' });
-             return;
-        }
-        
-        const data = await AuthService.login(email, password);
-        res.json(data);
+        // req.user is set by verifyToken middleware — Firebase Client SDK already created the user
+        const uid = req.user!.uid;
+        const email = req.user!.email || req.body.email;
+        const profile = await AuthService.createProfile(uid, email);
+        res.json({ uid, profile });
     } catch (error) {
         next(error);
     }

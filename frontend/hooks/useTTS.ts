@@ -1,8 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useStore } from '@/store/useStore';
 
 export function useTTS() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isSupported, setIsSupported] = useState(true);
+  const { language } = useStore();
 
   useEffect(() => {
     if (typeof window !== 'undefined' && !('speechSynthesis' in window)) {
@@ -23,6 +25,9 @@ export function useTTS() {
     window.speechSynthesis.cancel();
     
     const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language; // Use the user's selected language
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
     
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
@@ -32,7 +37,7 @@ export function useTTS() {
     };
 
     window.speechSynthesis.speak(utterance);
-  }, [isSupported]);
+  }, [isSupported, language]);
 
   const stop = useCallback(() => {
     if (!isSupported || typeof window === 'undefined') return;

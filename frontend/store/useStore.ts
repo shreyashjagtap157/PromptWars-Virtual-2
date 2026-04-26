@@ -19,6 +19,7 @@ interface AppState {
   setTheme: (theme: 'dark' | 'light' | 'system') => void;
   updateGuideProgress: (stepId: string, status: 'pending' | 'active' | 'completed') => void;
   resetGuideProgress: () => void;
+  setGuideProgress: (progress: Record<string, 'pending' | 'active' | 'completed'>) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -48,4 +49,5 @@ export const useStore = create<AppState>((set) => ({
     }
   })),
   resetGuideProgress: () => set({ guideProgress: {} }),
+  setGuideProgress: (progress) => set({ guideProgress: progress }),
 }))

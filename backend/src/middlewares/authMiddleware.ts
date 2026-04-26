@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
-import * as jwt from 'jsonwebtoken';
+import { auth } from '../config/firebase';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: any;
+      user?: { uid: string; email?: string };
     }
   }
 }
 
-export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
+export const verifyToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     res.status(401).json({ error: 'Unauthorized: No token provided' });
@@ -18,14 +18,29 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction): vo
 
   const token = authHeader.split(' ')[1];
   try {
-    // In a real production Firebase app:
-    // const decodedToken = await admin.auth().verifyIdToken(token);
-    // For this mock local setup fulfilling the POST /auth/login request:
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mock-secret-for-jwt-signing');
-    req.user = decoded;
+    const decodedToken = await auth.verifyIdToken(token);
+    req.user = { uid: decodedToken.uid, email: decodedToken.email };
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    res.status(401).json({ error: 'Unauthorized: Invalid or expired token' });
     return;
   }
+};
+
+// Optional auth — sets req.user if token present, but doesn't block
+export const optionalAuth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    next();
+    return;
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decodedToken = await auth.verifyIdToken(token);
+    req.user = { uid: decodedToken.uid, email: decodedToken.email };
+  } catch {
+    // Token invalid — proceed as guest
+  }
+  next();
 };

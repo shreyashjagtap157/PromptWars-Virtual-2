@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { register, login } from '../controllers/authController';
+import { register } from '../controllers/authController';
+import { verifyToken } from '../middlewares/authMiddleware';
 
 const router = Router();
-router.post('/register', register);
-router.post('/login', login);
+
+// POST /auth/register — requires Firebase ID token, creates Firestore profile
+router.post('/register', verifyToken, register);
 
 export default router;
