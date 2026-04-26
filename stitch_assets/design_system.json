@@ -1,0 +1,133 @@
+{
+  "designSystems": [
+    {
+      "name": "assets/1ee22455a4864cd9ad8377148d967106",
+      "designSystem": {
+        "displayName": "Civic Modern",
+        "styleGuidelines": "## Brand & Style\nThe design system is built upon the \"Civic Modern\" aesthetic—a synthesis of institutional authority and contemporary digital accessibility. It targets citizens, legal professionals, and community leaders who require high-density information presented with clarity and prestige.\n\nThe style leans into **Corporate Modern with Tactile Depth**. Unlike sterile minimalism, this system utilizes micro-interactions, soft gradients, and multi-layered elevation to create a \"physical\" sense of trust. It evokes the feeling of a well-maintained civic building: structured, clean, and permanent, yet welcoming to all. The emotional response is one of guided confidence and secure transparency.\n\n## Layout & Spacing\nA rigorous **12-column fluid grid** governs the desktop experience. The layout philosophy is \"Structured Comfort,\" using wide gutters (24px) to prevent information density from feeling overwhelming. \n\nStandardize component internal padding at 24px (md) for cards and 16px (sm) for list items. Large-scale sections should be separated by 64px (xl) to allow the design to breathe and emphasize the transition between different civic topics.\n\n## Elevation & Depth\nDepth in this design system is achieved through **Ambient Shadows** and **Micro-Gradients**. \n\n1.  **Low Elevation (Cards):** Use a 2-layer shadow. Layer 1: 0px 1px 3px rgba(15, 23, 42, 0.05). Layer 2: 0px 10px 15px -3px rgba(15, 23, 42, 0.08).\n2.  **High Elevation (Modals/Popovers):** Increase the blur and spread, adding a 1px border (#E2E8F0) to ensure the element feels physically detached from the background.\n3.  **Depth Gradients:** Buttons and headers should feature a very subtle top-to-bottom linear gradient (e.g., Primary color to a slightly darker shade) to simulate a light source from above, giving elements a \"premium pressed\" quality.\n\n## Components\n### Buttons\nButtons feature a subtle 1px inner-top highlight. Primary buttons use the Deep Navy with a 10% darkening effect on hover. Secondary buttons use a transparent background with a 1.5px border.\n\n### Cards\nCards are the primary container. They must always have a white background (in Light Mode) or Slate (in Dark Mode) with a subtle 1px border. The shadow should feel soft and \"baked in,\" not harsh.\n\n### Status Badges\nUsed for application statuses (e.g., \"Pending,\" \"Approved\"). Use the Secondary Teal for positive states and a soft Amber for warnings. Badges should have a 10% opacity background of the text color to maintain a premium, tonal look.\n\n### Input Fields\nInputs use a \"Floating Label\" or \"Inset Label\" style. On focus, the border transitions from Gray (#E2E8F0) to Primary Navy (#0F172A) with a soft 3px outer glow in the primary color at 10% opacity.\n\n### Iconography\nUse \"Duo-tone\" or \"Thin-line\" icons with a consistent 2px stroke. Icons should be encased in a soft-gray circular or square background (12px radius) when used as primary navigation anchors.",
+        "theme": {
+          "colorMode": "LIGHT",
+          "font": "INTER",
+          "roundness": "ROUND_EIGHT",
+          "customColor": "#0F172A",
+          "headlineFont": "INTER",
+          "bodyFont": "INTER",
+          "labelFont": "INTER",
+          "namedColors": {
+            "background": "#fcf8fa",
+            "error": "#ba1a1a",
+            "error_container": "#ffdad6",
+            "inverse_on_surface": "#f3f0f2",
+            "inverse_primary": "#bec6e0",
+            "inverse_surface": "#303032",
+            "on_background": "#1b1b1d",
+            "on_error": "#ffffff",
+            "on_error_container": "#93000a",
+            "on_primary": "#ffffff",
+            "on_primary_container": "#7c839b",
+            "on_primary_fixed": "#131b2e",
+            "on_primary_fixed_variant": "#3f465c",
+            "on_secondary": "#ffffff",
+            "on_secondary_container": "#00714d",
+            "on_secondary_fixed": "#002113",
+            "on_secondary_fixed_variant": "#005236",
+            "on_surface": "#1b1b1d",
+            "on_surface_variant": "#45464d",
+            "on_tertiary": "#ffffff",
+            "on_tertiary_container": "#98805d",
+            "on_tertiary_fixed": "#271901",
+            "on_tertiary_fixed_variant": "#574425",
+            "outline": "#76777d",
+            "outline_variant": "#c6c6cd",
+            "primary": "#000000",
+            "primary_container": "#131b2e",
+            "primary_fixed": "#dae2fd",
+            "primary_fixed_dim": "#bec6e0",
+            "secondary": "#006c49",
+            "secondary_container": "#6cf8bb",
+            "secondary_fixed": "#6ffbbe",
+            "secondary_fixed_dim": "#4edea3",
+            "surface": "#fcf8fa",
+            "surface_bright": "#fcf8fa",
+            "surface_container": "#f0edef",
+            "surface_container_high": "#eae7e9",
+            "surface_container_highest": "#e4e2e4",
+            "surface_container_low": "#f6f3f5",
+            "surface_container_lowest": "#ffffff",
+            "surface_dim": "#dcd9db",
+            "surface_tint": "#565e74",
+            "surface_variant": "#e4e2e4",
+            "tertiary": "#000000",
+            "tertiary_container": "#271901",
+            "tertiary_fixed": "#fcdeb5",
+            "tertiary_fixed_dim": "#dec29a"
+          }
+        },
+        "designMd": "---\nname: Civic Modern\ncolors:\n  surface: '#fcf8fa'\n  surface-dim: '#dcd9db'\n  surface-bright: '#fcf8fa'\n  surface-container-lowest: '#ffffff'\n  surface-container-low: '#f6f3f5'\n  surface-container: '#f0edef'\n  surface-container-high: '#eae7e9'\n  surface-container-highest: '#e4e2e4'\n  on-surface: '#1b1b1d'\n  on-surface-variant: '#45464d'\n  inverse-surface: '#303032'\n  inverse-on-surface: '#f3f0f2'\n  outline: '#76777d'\n  outline-variant: '#c6c6cd'\n  surface-tint: '#565e74'\n  primary: '#000000'\n  on-primary: '#ffffff'\n  primary-container: '#131b2e'\n  on-primary-container: '#7c839b'\n  inverse-primary: '#bec6e0'\n  secondary: '#006c49'\n  on-secondary: '#ffffff'\n  secondary-container: '#6cf8bb'\n  on-secondary-container: '#00714d'\n  tertiary: '#000000'\n  on-tertiary: '#ffffff'\n  tertiary-container: '#271901'\n  on-tertiary-container: '#98805d'\n  error: '#ba1a1a'\n  on-error: '#ffffff'\n  error-container: '#ffdad6'\n  on-error-container: '#93000a'\n  primary-fixed: '#dae2fd'\n  primary-fixed-dim: '#bec6e0'\n  on-primary-fixed: '#131b2e'\n  on-primary-fixed-variant: '#3f465c'\n  secondary-fixed: '#6ffbbe'\n  secondary-fixed-dim: '#4edea3'\n  on-secondary-fixed: '#002113'\n  on-secondary-fixed-variant: '#005236'\n  tertiary-fixed: '#fcdeb5'\n  tertiary-fixed-dim: '#dec29a'\n  on-tertiary-fixed: '#271901'\n  on-tertiary-fixed-variant: '#574425'\n  background: '#fcf8fa'\n  on-background: '#1b1b1d'\n  surface-variant: '#e4e2e4'\ntypography:\n  h1:\n    fontFamily: Inter\n    fontSize: 48px\n    fontWeight: '800'\n    lineHeight: '1.1'\n    letterSpacing: -0.02em\n  h2:\n    fontFamily: Inter\n    fontSize: 36px\n    fontWeight: '700'\n    lineHeight: '1.2'\n    letterSpacing: -0.01em\n  h3:\n    fontFamily: Inter\n    fontSize: 24px\n    fontWeight: '600'\n    lineHeight: '1.3'\n  body-lg:\n    fontFamily: Inter\n    fontSize: 18px\n    fontWeight: '400'\n    lineHeight: '1.6'\n  body-md:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: '1.5'\n  label-caps:\n    fontFamily: Inter\n    fontSize: 12px\n    fontWeight: '700'\n    lineHeight: '1'\n    letterSpacing: 0.05em\n  button:\n    fontFamily: Inter\n    fontSize: 14px\n    fontWeight: '600'\n    lineHeight: '1'\nrounded:\n  sm: 0.25rem\n  DEFAULT: 0.5rem\n  md: 0.75rem\n  lg: 1rem\n  xl: 1.5rem\n  full: 9999px\nspacing:\n  base: 4px\n  xs: 8px\n  sm: 16px\n  md: 24px\n  lg: 40px\n  xl: 64px\n  grid_columns: '12'\n  grid_gutter: 24px\n  grid_margin: 32px\n---\n\n## Brand & Style\nThe design system is built upon the \"Civic Modern\" aesthetic—a synthesis of institutional authority and contemporary digital accessibility. It targets citizens, legal professionals, and community leaders who require high-density information presented with clarity and prestige.\n\nThe style leans into **Corporate Modern with Tactile Depth**. Unlike sterile minimalism, this system utilizes micro-interactions, soft gradients, and multi-layered elevation to create a \"physical\" sense of trust. It evokes the feeling of a well-maintained civic building: structured, clean, and permanent, yet welcoming to all. The emotional response is one of guided confidence and secure transparency.\n\n## Colors\nThe palette is rooted in a \"Command and Clarity\" philosophy. \n\n**Light Mode** uses a soft neutral foundation (#F8FAFC) to reduce eye strain, while pure white cards create clear containment for data. The Deep Navy (#0F172A) acts as the anchor for all primary actions and headings, signaling stability. The Vibrant Teal (#10B981) is reserved for success states, progress indicators, and \"constructive\" actions.\n\n**Dark Mode** flips the hierarchy to prioritize readability in low-light environments. The Slate cards (#1E293B) sit atop the Charcoal background, while the Cyan accent (#06B6D4) provides high-contrast focus points for navigational elements. Use subtle 1px borders in Dark Mode to maintain card definition against the deep background.\n\n## Typography\nThis design system utilizes **Inter** for its exceptional legibility and systematic weight distribution. \n\nThe hierarchy is \"Top-Heavy,\" meaning headlines are significantly bolder and tighter in letter-spacing to command attention. Body text utilizes a generous line height (1.5 - 1.6) to ensure long-form civic guides remain readable. Small labels and metadata should use the `label-caps` style to differentiate secondary information from the primary narrative flow.\n\n## Layout & Spacing\nA rigorous **12-column fluid grid** governs the desktop experience. The layout philosophy is \"Structured Comfort,\" using wide gutters (24px) to prevent information density from feeling overwhelming. \n\nStandardize component internal padding at 24px (md) for cards and 16px (sm) for list items. Large-scale sections should be separated by 64px (xl) to allow the design to breathe and emphasize the transition between different civic topics.\n\n## Elevation & Depth\nDepth in this design system is achieved through **Ambient Shadows** and **Micro-Gradients**. \n\n1.  **Low Elevation (Cards):** Use a 2-layer shadow. Layer 1: 0px 1px 3px rgba(15, 23, 42, 0.05). Layer 2: 0px 10px 15px -3px rgba(15, 23, 42, 0.08).\n2.  **High Elevation (Modals/Popovers):** Increase the blur and spread, adding a 1px border (#E2E8F0) to ensure the element feels physically detached from the background.\n3.  **Depth Gradients:** Buttons and headers should feature a very subtle top-to-bottom linear gradient (e.g., Primary color to a slightly darker shade) to simulate a light source from above, giving elements a \"premium pressed\" quality.\n\n## Shapes\nThe shape language is consistently **Rounded**, striking a balance between the friendliness of organic curves and the professionalism of geometric grids.\n\n- **Primary Cards:** 16px (rounded-xl)\n- **Buttons & Inputs:** 8px (rounded-md)\n- **Status Badges:** Pill-shaped (9999px) to distinguish them from actionable buttons.\n- **Search Bars:** 12px (rounded-lg) to suggest a modern, approachable entry point.\n\n## Components\n### Buttons\nButtons feature a subtle 1px inner-top highlight. Primary buttons use the Deep Navy with a 10% darkening effect on hover. Secondary buttons use a transparent background with a 1.5px border.\n\n### Cards\nCards are the primary container. They must always have a white background (in Light Mode) or Slate (in Dark Mode) with a subtle 1px border. The shadow should feel soft and \"baked in,\" not harsh.\n\n### Status Badges\nUsed for application statuses (e.g., \"Pending,\" \"Approved\"). Use the Secondary Teal for positive states and a soft Amber for warnings. Badges should have a 10% opacity background of the text color to maintain a premium, tonal look.\n\n### Input Fields\nInputs use a \"Floating Label\" or \"Inset Label\" style. On focus, the border transitions from Gray (#E2E8F0) to Primary Navy (#0F172A) with a soft 3px outer glow in the primary color at 10% opacity.\n\n### Iconography\nUse \"Duo-tone\" or \"Thin-line\" icons with a consistent 2px stroke. Icons should be encased in a soft-gray circular or square background (12px radius) when used as primary navigation anchors.",
+        "colorVariant": "FIDELITY",
+        "overridePrimaryColor": "#0F172A",
+        "overrideSecondaryColor": "#10B981",
+        "spacingScale": 2,
+        "typography": {
+          "body-lg": {
+            "fontFamily": "Inter",
+            "fontSize": "18px",
+            "fontWeight": "400",
+            "lineHeight": "1.6"
+          },
+          "body-md": {
+            "fontFamily": "Inter",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "1.5"
+          },
+          "button": {
+            "fontFamily": "Inter",
+            "fontSize": "14px",
+            "fontWeight": "600",
+            "lineHeight": "1"
+          },
+          "h1": {
+            "fontFamily": "Inter",
+            "fontSize": "48px",
+            "fontWeight": "800",
+            "lineHeight": "1.1",
+            "letterSpacing": "-0.02em"
+          },
+          "h2": {
+            "fontFamily": "Inter",
+            "fontSize": "36px",
+            "fontWeight": "700",
+            "lineHeight": "1.2",
+            "letterSpacing": "-0.01em"
+          },
+          "h3": {
+            "fontFamily": "Inter",
+            "fontSize": "24px",
+            "fontWeight": "600",
+            "lineHeight": "1.3"
+          },
+          "label-caps": {
+            "fontFamily": "Inter",
+            "fontSize": "12px",
+            "fontWeight": "700",
+            "lineHeight": "1",
+            "letterSpacing": "0.05em"
+          }
+        },
+        "spacing": {
+          "base": "4px",
+          "grid_columns": "12",
+          "grid_gutter": "24px",
+          "grid_margin": "32px",
+          "lg": "40px",
+          "md": "24px",
+          "sm": "16px",
+          "xl": "64px",
+          "xs": "8px"
+        }
+      }
+    }
+  ],
+  "version": "1"
+}

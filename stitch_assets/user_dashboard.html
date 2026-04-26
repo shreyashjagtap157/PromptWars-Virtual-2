@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CivicGuide Dashboard</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e4e2e4",
+                    "on-error": "#ffffff",
+                    "tertiary-container": "#271901",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#45464d",
+                    "on-secondary-container": "#00714d",
+                    "inverse-surface": "#303032",
+                    "secondary-container": "#6cf8bb",
+                    "surface-bright": "#fcf8fa",
+                    "tertiary-fixed": "#fcdeb5",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#002113",
+                    "on-background": "#1b1b1d",
+                    "tertiary-fixed-dim": "#dec29a",
+                    "on-secondary-fixed-variant": "#005236",
+                    "inverse-primary": "#bec6e0",
+                    "surface-tint": "#565e74",
+                    "error-container": "#ffdad6",
+                    "on-surface": "#1b1b1d",
+                    "surface-container-high": "#eae7e9",
+                    "on-primary": "#ffffff",
+                    "primary": "#000000",
+                    "surface-dim": "#dcd9db",
+                    "primary-container": "#131b2e",
+                    "outline-variant": "#c6c6cd",
+                    "surface-container-low": "#f6f3f5",
+                    "on-tertiary-container": "#98805d",
+                    "secondary-fixed": "#6ffbbe",
+                    "primary-fixed": "#dae2fd",
+                    "on-primary-container": "#7c839b",
+                    "on-tertiary-fixed-variant": "#574425",
+                    "outline": "#76777d",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "surface": "#fcf8fa",
+                    "on-tertiary-fixed": "#271901",
+                    "tertiary": "#000000",
+                    "primary-fixed-dim": "#bec6e0",
+                    "on-primary-fixed": "#131b2e",
+                    "inverse-on-surface": "#f3f0f2",
+                    "background": "#fcf8fa",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#f0edef",
+                    "surface-container-highest": "#e4e2e4",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed-dim": "#4edea3",
+                    "secondary": "#006c49"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "24px",
+                    "grid_columns": "12",
+                    "grid_gutter": "24px",
+                    "base": "4px",
+                    "xs": "8px",
+                    "grid_margin": "32px",
+                    "sm": "16px",
+                    "xl": "64px",
+                    "lg": "40px"
+            },
+            "fontFamily": {
+                    "h2": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "h3": ["Inter"],
+                    "h1": ["Inter"],
+                    "body-md": ["Inter"],
+                    "button": ["Inter"]
+            },
+            "fontSize": {
+                    "h2": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "h1": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "button": ["14px", {"lineHeight": "1", "fontWeight": "600"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .civic-shadow {
+            box-shadow: 0px 1px 3px rgba(15, 23, 42, 0.05), 0px 10px 15px -3px rgba(15, 23, 42, 0.08);
+        }
+        .civic-gradient {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.02) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary selection:text-on-primary">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 w-full z-40 border-b bg-white/95 dark:bg-slate-950/95 backdrop-blur-md text-slate-900 dark:text-slate-50 font-sans text-sm font-medium tracking-tight border-slate-200 dark:border-slate-800 shadow-[0px_1px_3px_rgba(15,23,42,0.05)] flex justify-between items-center h-16 px-6">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+<span class="text-xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">CivicGuide</span>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all duration-200 rounded-full active:scale-[0.98] transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">language</span>
+</button>
+<button class="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-all duration-200 rounded-full active:scale-[0.98] transition-transform flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">dark_mode</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant ml-2">
+<img alt="User profile avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a professional woman with soft natural lighting and a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBz1JjzwfFn6noSjMQPgYV7TQp_-F6p6KRpH_Wh8_CSU_xujx6IhT6oRiVeehxL8LEESBmCz3MswYMZTJ5636eJ7PFmyL1SVxB_GT65mndTTMhVPt_MgfZUCekefQdZVfPReskgwSkcmbPCworw88-ubsgYVxBSXdvCV44803Oj67E8qemayCLYx2O8nIvYOweq40ZuZVPKCZIIwgPhg-aetJxK6gzDgoxn0kMhEiNkMroctTd67RKGpYx0fXfyPTODrDzuD7z2YhU"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r hidden lg:flex flex-col bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50 font-sans text-[13px] font-semibold border-slate-200 dark:border-slate-800 shadow-none flex flex-col pt-20 pb-8 h-full z-30">
+<div class="flex flex-col gap-1 px-3 mt-4">
+<!-- Active Tab: Home -->
+<a class="cursor-pointer flex items-center gap-3 px-6 py-4 text-slate-900 dark:text-white border-r-4 border-slate-900 dark:border-slate-50 bg-slate-50 dark:bg-slate-900/50 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">home</span>
+<span>Home</span>
+</a>
+<a class="cursor-pointer flex items-center gap-3 px-6 py-4 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/30 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span>My Guide</span>
+</a>
+<a class="cursor-pointer flex items-center gap-3 px-6 py-4 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/30 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">location_on</span>
+<span>Region</span>
+</a>
+<a class="cursor-pointer flex items-center gap-3 px-6 py-4 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/30 hover:translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">help</span>
+<span>FAQ</span>
+</a>
+<a class="cursor-pointer flex items-center gap-3 px-6 py-4 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900/30 hover:translate-x-1 transition-transform duration-200 mt-auto" href="#">
+<span class="material-symbols-outlined text-[20px]">person</span>
+<span>Profile</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-0 lg:ml-64 pt-[80px] min-h-screen p-md md:p-grid_margin">
+<div class="max-w-7xl mx-auto grid grid-cols-12 gap-grid_gutter">
+<!-- Hero / Welcome Bento (Span 8) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant civic-shadow p-md lg:p-lg flex flex-col justify-between relative overflow-hidden">
+<!-- Subtle background accent -->
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed opacity-20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
+<div class="relative z-10">
+<h1 class="font-h2 text-h2 text-on-surface mb-xs">Welcome back, Alex</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-lg mb-lg">Your election readiness profile is taking shape. Let's make sure you have everything you need for the upcoming local ballot.</p>
+<div class="flex flex-wrap items-center gap-md mb-lg">
+<div class="inline-flex items-center gap-xs bg-surface-container border border-outline-variant rounded-full px-4 py-2">
+<span class="material-symbols-outlined text-secondary text-[18px]">location_on</span>
+<span class="font-button text-button text-on-surface">California, District 12</span>
+<div class="w-px h-4 bg-outline-variant mx-1"></div>
+<button class="font-button text-button text-primary hover:underline underline-offset-2">Change Region</button>
+</div>
+</div>
+</div>
+<div class="relative z-10 mt-auto">
+<button class="bg-primary text-on-primary font-button text-button px-6 py-3 rounded-DEFAULT civic-gradient hover:bg-opacity-90 transition-all flex items-center gap-xs w-max border-t border-white/20 shadow-sm">
+<span>Resume My Guide</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Progress Tracker Bento (Span 4) -->
+<div class="col-span-12 md:col-span-6 lg:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant civic-shadow p-md flex flex-col items-center justify-center text-center">
+<h2 class="font-h3 text-h3 text-on-surface mb-xs w-full text-left">Your Readiness</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-lg w-full text-left">Complete your profile to unlock customized ballot measures.</p>
+<div class="relative w-40 h-40 flex items-center justify-center mb-md">
+<!-- SVG Circular Gauge -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<!-- Background track -->
+<circle class="text-surface-variant" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-width="8"></circle>
+<!-- Progress track (65%) -->
+<circle class="text-secondary" cx="50" cy="50" fill="transparent" r="40" stroke="currentColor" stroke-dasharray="251.2" stroke-dashoffset="87.92" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-h2 text-h2 text-on-surface leading-none">65%</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-1">COMPLETE</span>
+</div>
+</div>
+</div>
+<!-- Next Step Card (Span 4) -->
+<div class="col-span-12 md:col-span-6 lg:col-span-4 bg-secondary-container rounded-xl border border-secondary-container/50 civic-shadow p-md flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow cursor-pointer">
+<div class="absolute top-0 right-0 p-4 opacity-10 transform translate-x-2 -translate-y-2 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[80px]">task_alt</span>
+</div>
+<div class="mb-auto relative z-10">
+<div class="inline-flex items-center gap-1 bg-white/20 text-on-secondary-container font-label-caps text-label-caps px-2 py-1 rounded-sm mb-sm">
+<span class="material-symbols-outlined text-[14px]">bolt</span> NEXT STEP
+                    </div>
+<h3 class="font-h3 text-h3 text-on-secondary-container mb-xs">Verify Registration</h3>
+<p class="font-body-md text-body-md text-on-secondary-container/80">Ensure your address matches the current voter rolls before the deadline.</p>
+</div>
+<div class="mt-lg relative z-10 flex items-center justify-between text-on-secondary-container font-button text-button">
+<span>Take Action</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+</div>
+</div>
+<!-- Recent Activity (Span 4) -->
+<div class="col-span-12 md:col-span-6 lg:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant civic-shadow p-md flex flex-col">
+<div class="flex items-center justify-between mb-sm">
+<h3 class="font-h3 text-h3 text-on-surface">Recent Activity</h3>
+<button class="text-primary font-button text-button hover:underline">View All</button>
+</div>
+<div class="flex flex-col gap-sm mt-xs">
+<div class="flex gap-sm items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 mt-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">bookmark</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Saved Measure Prop 24</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">2 days ago</p>
+</div>
+</div>
+<div class="h-px bg-surface-variant w-full"></div>
+<div class="flex gap-sm items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 mt-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">done_all</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Completed Polling Locator</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Oct 12, 2023</p>
+</div>
+</div>
+<div class="h-px bg-surface-variant w-full"></div>
+<div class="flex gap-sm items-start">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center shrink-0 mt-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">how_to_reg</span>
+</div>
+<div>
+<p class="font-body-md text-body-md text-on-surface font-semibold">Updated Voter Preferences</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Oct 05, 2023</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Preferences (Span 4) -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant civic-shadow p-md flex flex-col">
+<h3 class="font-h3 text-h3 text-on-surface mb-lg">Preferences</h3>
+<div class="flex flex-col gap-md">
+<div class="flex items-center justify-between bg-surface-container-low p-sm rounded-lg border border-outline-variant/50">
+<div class="flex items-center gap-sm text-on-surface">
+<span class="material-symbols-outlined">translate</span>
+<span class="font-body-md text-body-md font-semibold">Language</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant bg-surface-container px-2 py-1 rounded-sm text-sm">English (US)</span>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low p-sm rounded-lg border border-outline-variant/50">
+<div class="flex items-center gap-sm text-on-surface">
+<span class="material-symbols-outlined">light_mode</span>
+<span class="font-body-md text-body-md font-semibold">Theme</span>
+</div>
+<span class="font-body-md text-body-md text-on-surface-variant bg-surface-container px-2 py-1 rounded-sm text-sm">Light</span>
+</div>
+<div class="flex items-center justify-between bg-surface-container-low p-sm rounded-lg border border-outline-variant/50">
+<div class="flex items-center gap-sm text-on-surface">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-body-md text-body-md font-semibold">Alerts</span>
+</div>
+<!-- Toggle Switch Mock -->
+<div class="w-10 h-5 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1/2 -translate-y-1/2 w-3.5 h-3.5 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+<button class="mt-auto pt-md text-center font-button text-button text-primary hover:underline w-full">Manage All Settings</button>
+</div>
+</div>
+</main>
+</body></html>
