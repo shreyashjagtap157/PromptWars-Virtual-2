@@ -34,7 +34,7 @@ export default function DashboardPage() {
   const regionLabel = region ? `${region.country}, ${region.state}` : 'No region set';
 
   return (
-    <main className="flex-1 px-4 md:px-8 lg:px-12 pb-24 max-w-7xl mx-auto w-full pt-8">
+    <main className="flex-1 px-4 md:px-8 lg:px-12 pb-24 max-w-7xl mx-auto pt-8">
       {/* Welcome Hero */}
       <section className="bg-gradient-to-r from-primary to-primary-container rounded-2xl p-8 md:p-12 text-on-primary mb-8 relative overflow-hidden shadow-[0px_4px_20px_-4px_rgba(0,0,0,0.1)]">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/3"></div>

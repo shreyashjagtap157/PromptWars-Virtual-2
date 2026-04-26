@@ -18,7 +18,7 @@ export default function GuidePage() {
     : null;
 
   return (
-    <main className="flex-1 px-4 md:px-8 lg:px-12 pb-24 max-w-5xl mx-auto w-full pt-8">
+    <main className="flex-1 px-4 md:px-8 lg:px-12 pb-24 max-w-5xl mx-auto pt-8">
       <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-outline-variant/30">
         <div>
            {regionLabel ? (

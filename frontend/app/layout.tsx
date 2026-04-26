@@ -24,7 +24,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           <Sidebar />
-          <div className="pt-20 lg:pt-0 lg:ml-64 min-h-screen pb-xl w-full">
+          <div className="pt-20 lg:pt-0 lg:ml-64 min-h-screen pb-xl flex flex-col">
             {children}
           </div>
         </Providers>
