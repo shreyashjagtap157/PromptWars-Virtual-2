@@ -3,7 +3,7 @@ import { FeatureCards } from "@/components/landing/FeatureCards";
 
 export default function LandingPage() {
   return (
-    <main className="w-full">
+    <main className="flex flex-col">
       <HeroSection />
 
       <section className="px-6 md:px-12 py-12 border-y border-outline-variant/30 bg-surface">
