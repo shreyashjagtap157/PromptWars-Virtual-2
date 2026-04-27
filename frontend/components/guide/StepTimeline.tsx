@@ -17,8 +17,10 @@ export function StepTimeline() {
   const [steps, setSteps] = useState<Step[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    setHasMounted(true);
     async function fetchSteps() {
       setIsLoading(true);
       setError(null);
@@ -36,7 +38,6 @@ export function StepTimeline() {
         const data = await response.json();
         
         const sortedSteps = (data.steps || []).sort((a: any, b: any) => a.order - b.order);
-        console.log(`[StepTimeline] Loaded ${sortedSteps.length} steps for "${queryRegion}"`);
         setSteps(sortedSteps);
       } catch (err: any) {
         setError(err.message);
@@ -68,7 +69,7 @@ export function StepTimeline() {
     }
   }, [steps, guideProgress, updateGuideProgress]);
 
-  if (isLoading) {
+  if (!hasMounted || isLoading) {
     return (
       <div className="mt-8 flex flex-col gap-8">
         {[1,2,3,4,5].map(i => (
@@ -100,6 +101,12 @@ export function StepTimeline() {
       {stepsWithStatus.map((step, index) => {
         const isCompleted = step.status === 'completed';
         const isActive = step.status === 'active';
+        
+        // Dynamic Translatons
+        const rawTranslatedTitle = t(`${step.id}_title`);
+        const title = rawTranslatedTitle === `${step.id}_title` ? step.title : rawTranslatedTitle;
+        const rawTranslatedDesc = t(`${step.id}_desc`);
+        const description = rawTranslatedDesc === `${step.id}_desc` ? step.description : rawTranslatedDesc;
 
         return (
           <div key={step.id} className="relative pl-20 pb-10 group animate-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${index * 50}ms` }}>
@@ -119,7 +126,7 @@ export function StepTimeline() {
                <div className="px-8 py-6 border-b border-outline-variant/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                  <div>
                    <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-                      <h3 className={`font-h3 text-xl font-bold tracking-tight ${isActive ? 'text-primary' : 'text-on-surface'}`}>{step.title}</h3>
+                      <h3 className={`font-h3 text-xl font-bold tracking-tight ${isActive ? 'text-primary' : 'text-on-surface'}`}>{title}</h3>
                       {isActive && (
                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-error text-on-error shadow-sm shadow-error/30 animate-pulse-slow">{t('guide_action_needed')}</span>
                       )}
@@ -133,25 +140,38 @@ export function StepTimeline() {
                    </p>
                  </div>
                  
-                 {/* Clickable "I have completed this" — shown for active AND pending steps */}
-                 {!isCompleted && (
-                   <button 
-                     onClick={() => updateGuideProgress(step.id, 'completed')}
-                     className="shrink-0 bg-primary text-on-primary px-5 py-2.5 rounded-xl font-button text-sm hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
-                     <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                     {t('guide_completed_btn')}
-                   </button>
-                 )}
+                 <div className="shrink-0 flex items-center gap-2">
+                   {/* Clickable "I have completed this" */}
+                   {!isCompleted && (
+                     <button 
+                       onClick={() => updateGuideProgress(step.id, 'completed', title)}
+                       className="bg-primary text-on-primary px-5 py-2.5 rounded-xl font-button text-sm hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
+                       <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                       {t('guide_completed_btn')}
+                     </button>
+                   )}
+
+                   {/* Clickable "Undo" when completed */}
+                   {isCompleted && (
+                     <button 
+                       onClick={() => updateGuideProgress(step.id, 'pending', title)}
+                       title="Undo completion"
+                       className="bg-surface-container-high text-on-surface-variant px-4 py-2.5 rounded-xl font-button text-sm hover:bg-surface-container-highest transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
+                       <span className="material-symbols-outlined text-[18px]">undo</span>
+                       {t('guide_undo_btn') || 'Undo'}
+                     </button>
+                   )}
+                 </div>
                </div>
 
                {/* Card Body */}
                <div className="px-8 py-6 bg-gradient-to-b from-transparent to-surface-container-low/20">
                  <p className="font-body-lg text-on-surface leading-relaxed mb-6">
-                    {step.description}
+                    {description}
                  </p>
                  
                  <div className="flex items-center justify-between gap-4">
-                    <ReaderControls text={step.description} />
+                    <ReaderControls text={description} />
                     <div className="text-[10px] font-bold text-on-surface-variant opacity-50">{t('guide_step_of', { curr: index + 1, total: steps.length })}</div>
                  </div>
                </div>

@@ -12,8 +12,8 @@ export function Sidebar() {
 
   const navItems = [
     { name: t('nav_dashboard'), icon: 'dashboard', href: '/app' },
-    { name: t('nav_guide'), icon: 'map', href: '/guide' },
     { name: t('nav_region'), icon: 'location_on', href: '/region' },
+    { name: t('nav_guide'), icon: 'map', href: '/guide' },
   ];
 
   const languages = [
