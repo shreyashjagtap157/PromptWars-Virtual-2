@@ -5,11 +5,13 @@ import { useTranslation } from '@/lib/i18n';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-  const { region, guideProgress, language } = useStore();
+  const { region, guideProgress, language, activityLog } = useStore();
   const { t } = useTranslation(language);
   const [totalStepCount, setTotalStepCount] = useState<number>(0);
+  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
+    setHasMounted(true);
     async function fetchStats() {
       try {
         const queryRegion = region?.country || '';
@@ -30,7 +32,8 @@ export default function DashboardPage() {
   }, [region?.country]);
 
   const totalCompleted = Object.values(guideProgress).filter(s => s === 'completed').length;
-  const progressPct = totalStepCount > 0 ? Math.round((totalCompleted / totalStepCount) * 100) : 0;
+  // Fallback to 0 if not mounted to avoid hydration mismatch
+  const progressPct = hasMounted && totalStepCount > 0 ? Math.round((totalCompleted / totalStepCount) * 100) : 0;
   
   const circumference = 2 * Math.PI * 15.9155;
   const offset = circumference - (progressPct / 100) * circumference;
@@ -42,7 +45,7 @@ export default function DashboardPage() {
           {t('dash_welcome')}, {region?.country || 'Voter'}
         </h1>
         <p className="font-body-lg text-on-surface-variant opacity-70">
-          {t('dash_progress', { pct: progressPct })}
+          {hasMounted ? t('dash_progress', { pct: progressPct }) : "..."}
         </p>
       </div>
 
@@ -60,7 +63,7 @@ export default function DashboardPage() {
                  strokeDashoffset={offset}
                />
              </svg>
-             <div className="text-center relative z-10">
+             <div className="text-center relative z-10 transition-opacity duration-300" style={{ opacity: hasMounted ? 1 : 0 }}>
                <span className="block font-h2 text-3xl font-black text-on-surface">{progressPct}%</span>
                <span className="block font-label-caps text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Progress</span>
              </div>
@@ -68,7 +71,9 @@ export default function DashboardPage() {
           <div className="flex-1 space-y-6">
             <div>
               <h3 className="font-h3 text-xl font-bold mb-2">{t('dash_keep_going')}</h3>
-              <p className="font-body-md text-on-surface-variant">{t('dash_steps_completed', { done: totalCompleted, total: totalStepCount })}</p>
+              <p className="font-body-md text-on-surface-variant">
+                 {hasMounted ? t('dash_steps_completed', { done: totalCompleted, total: totalStepCount || '...' }) : '...'}
+              </p>
             </div>
             <Link href="/guide" className="inline-flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl font-button text-sm hover:translate-y-[-2px] transition-all cursor-pointer">
               {t('dash_continue')} <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
@@ -95,7 +100,35 @@ export default function DashboardPage() {
           <div className="px-8 py-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low/30">
             <h3 className="font-h3 text-lg font-bold">{t('dash_recent')}</h3>
           </div>
-          <div className="p-8 flex-1 italic text-on-surface-variant opacity-40 text-sm">{t('dash_synced')}</div>
+          <div className="p-6 flex-1 flex flex-col gap-3">
+             {!hasMounted ? (
+                <div className="italic text-on-surface-variant opacity-40 text-sm">{t('dash_synced')}</div>
+             ) : activityLog.length === 0 ? (
+                <div className="italic text-on-surface-variant opacity-40 text-sm">No recent activity detected.</div>
+             ) : (
+                activityLog.slice(0, 4).map(act => {
+                  // Determine translated title
+                  let translatedMessage = act.message;
+                  if (act.stepId && (act.type === 'complete' || act.type === 'undo')) {
+                    const stepTitleKey = `${act.stepId}_title`;
+                    const translatedTitle = t(stepTitleKey) === stepTitleKey ? act.message.replace(/^(Completed: |Reverted: )/, '') : t(stepTitleKey);
+                    translatedMessage = t(act.type === 'complete' ? 'act_completed' : 'act_undone', { step: translatedTitle });
+                  }
+
+                  return (
+                    <div key={act.id} className="flex gap-4 items-start p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 text-sm">
+                       <span className={`material-symbols-outlined text-[18px] shrink-0 ${act.type === 'complete' ? 'text-secondary' : act.type === 'undo' ? 'text-primary' : 'text-on-surface-variant'}`}>
+                         {act.type === 'complete' ? 'check_circle' : act.type === 'undo' ? 'undo' : 'info'}
+                       </span>
+                       <div>
+                         <div className="font-bold text-on-surface">{translatedMessage}</div>
+                         <div className="text-[10px] text-on-surface-variant mt-0.5">{new Date(act.timestamp).toLocaleTimeString()}</div>
+                       </div>
+                    </div>
+                  );
+                })
+             )}
+          </div>
         </div>
         <div className="flex flex-col bg-surface border border-outline-variant/30 rounded-[32px] overflow-hidden min-h-full">
           <div className="px-8 py-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low/30">

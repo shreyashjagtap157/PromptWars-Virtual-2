@@ -7,20 +7,30 @@ export type Region = {
   district: string;
 };
 
+export type Activity = {
+  id: string;
+  type: 'complete' | 'undo' | 'system';
+  message: string;
+  stepId?: string;
+  timestamp: number;
+};
+
 interface AppState {
   isLoggedIn: boolean; // Kept for interface compatibility but unused
   region: Region | null;
   language: string;
   theme: 'dark' | 'light' | 'system';
   guideProgress: Record<string, 'pending' | 'active' | 'completed'>;
+  activityLog: Activity[];
   
   setLogin: (status: boolean) => void;
   setRegion: (region: Region | null) => void;
   setLanguage: (lang: string) => void;
   setTheme: (theme: 'dark' | 'light' | 'system') => void;
-  updateGuideProgress: (stepId: string, status: 'pending' | 'active' | 'completed') => void;
+  updateGuideProgress: (stepId: string, status: 'pending' | 'active' | 'completed', title?: string) => void;
   resetGuideProgress: () => void;
   setGuideProgress: (progress: Record<string, 'pending' | 'active' | 'completed'>) => void;
+  addActivity: (type: 'complete' | 'undo' | 'system', message: string, stepId?: string) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -31,9 +41,18 @@ export const useStore = create<AppState>()(
       language: 'en-US',
       theme: 'system',
       guideProgress: {},
+      activityLog: [],
       
       setLogin: (status) => set({ isLoggedIn: status }),
-      setRegion: (region) => set({ region, guideProgress: {} }),
+      setRegion: (region) => set((state) => {
+        // Prevent clearing if same region
+        if (state.region?.country === region?.country) return { region };
+        return { 
+          region, 
+          guideProgress: {},
+          activityLog: [{ id: Math.random().toString(), type: 'system', message: `Region updated to ${region?.country || 'Unknown'}`, timestamp: Date.now() }] 
+        };
+      }),
       setLanguage: (language) => set({ language }),
       setTheme: (theme) => {
         set({ theme });
@@ -45,14 +64,29 @@ export const useStore = create<AppState>()(
           }
         }
       },
-      updateGuideProgress: (stepId, status) => set((state) => ({
-        guideProgress: {
-          ...state.guideProgress,
-          [stepId]: status
+      updateGuideProgress: (stepId, status, title) => set((state) => {
+        const newProgress = { ...state.guideProgress, [stepId]: status };
+        let newLog = [...state.activityLog];
+        
+        if (title) {
+          if (status === 'completed') {
+            newLog.unshift({ id: Math.random().toString(), type: 'complete', message: `Completed: ${title}`, stepId, timestamp: Date.now() });
+          } else if (status === 'pending') {
+            newLog.unshift({ id: Math.random().toString(), type: 'undo', message: `Reverted: ${title}`, stepId, timestamp: Date.now() });
+          }
         }
-      })),
-      resetGuideProgress: () => set({ guideProgress: {} }),
+        
+        // Keep only last 10 activities to save storage
+        return {
+          guideProgress: newProgress,
+          activityLog: newLog.slice(0, 10)
+        };
+      }),
+      resetGuideProgress: () => set({ guideProgress: {}, activityLog: [] }),
       setGuideProgress: (progress) => set({ guideProgress: progress }),
+      addActivity: (type, message, stepId) => set((state) => ({
+        activityLog: [{ id: Math.random().toString(), type, message, stepId, timestamp: Date.now() }, ...state.activityLog].slice(0, 10)
+      }))
     }),
     {
       name: 'civic-guide-storage', // Key used in localStorage
