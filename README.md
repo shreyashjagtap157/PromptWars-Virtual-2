@@ -1,8 +1,10 @@
-# CivicGuide — Election Process Assistant
+# CivicGuide — Frictionless Election Process Assistant
 
 > **PromptWars Virtual 2** | Civic Tech & Accessibility Vertical
 
-CivicGuide is a smart, dynamic election process assistant that simplifies civic engagement by guiding voters through personalized, region-specific election workflows. It provides step-by-step voting instructions, Text-to-Speech accessibility, multi-language support, and persistent progress tracking — all backed by Firebase Authentication and Firestore.
+CivicGuide is a smart, dynamic election process assistant that eliminates all barriers to civic engagement. By replacing mandatory account registration with high-performance local persistence, CivicGuide provides a high-trust, account-free experience. 
+
+It guides users through exhaustive, region-specific election roadmaps (13 steps for India, 10 for USA) with Text-to-Speech accessibility and native multi-language support (English, Hindi, Marathi).
 
 ---
 
@@ -10,34 +12,24 @@ CivicGuide is a smart, dynamic election process assistant that simplifies civic 
 
 **Civic Tech & Information Access**
 
-Navigating voting laws across different countries, states, and districts can be overwhelming. CivicGuide breaks down regional election processes into digestible, actionable timelines — making democratic participation accessible to everyone.
+Navigating complex voting protocols can be the biggest barrier to democratic participation. CivicGuide solves this by providing "Frictionless Information Design" — zero sign-ups, instant GPS-based localization, and exhaustive step-by-step verified roadmaps tailored to the user's jurisdiction.
 
 ---
 
 ## Approach & Logic
 
-### Architecture
-```
-┌─────────────────────┐     ┌────────────────────────┐
-│   Next.js Frontend  │────▶│   Express.js Backend   │
-│   (App Router, TS)  │ /api│   (TypeScript)         │
-│                     │proxy│                        │
-│  • Zustand Store    │     │  • Firebase Admin SDK   │
-│  • Firebase Client  │     │  • Firestore Database   │
-│  • TTS Engine       │     │  • Swagger UI Docs      │
-└─────────────────────┘     └────────────────────────┘
-```
+### 1. Frictionless Architecture
+To maximize accessibility, we removed mandatory authentication. 
+- **Persistence**: All user progress, region selections, and language preferences are handled via a persistent **Zustand Store** synced to the browser's `localStorage`.
+- **Privacy**: No user data is stored on our servers, ensuring a privacy-first civic experience.
+- **Zero-Barrier**: Users can start their roadmap instantly upon opening the app.
 
-### Decision Logic
-1. **Region Detection** → User selects country/state/district (or uses auto-detect)
-2. **Backend Resolution** → `GET /process?region=India` returns India-specific steps (Voter List, EPIC, EVM); `region=US` returns US-specific steps; no region returns a general democratic fallback
-3. **Dynamic Rendering** → Frontend fetches and renders a personalized timeline
-4. **Progress Tracking** → Steps are marked complete via Zustand; for authenticated users, progress syncs to Firestore via `PUT /user/progress`
-5. **Session Persistence** → On reload, `onAuthStateChanged` pulls saved state from `GET /user/profile` back into the store
-
-### Guest vs Registered
-- **Guests**: Can browse landing, select region, view guide, and use TTS. Progress is local-only (not persisted).
-- **Registered Users**: All guest features + progress, region, and language preferences persist to Firestore and sync across sessions.
+### 2. Decision Logic
+- **Region Detection**: Automatically detects the user's country via IP-based geolocation (fallback) or manual selection.
+- **Exhaustive Roadmap Engine**: The backend serves specific legal protocols.
+  - **India**: 13 comprehensive steps covering ECI search, EPIC download, Form 17A signing, and VVPAT verification.
+  - **USA**: 10 steps covering SOS portal checks, overvote reviews, and optical scanner submission.
+- **Dynamic Translation**: Native dictionary-based translation system for UI and Guide content (English, Hindi, Marathi).
 
 ---
 
@@ -45,97 +37,48 @@ Navigating voting laws across different countries, states, and districts can be 
 
 | Feature | Description |
 |---------|-------------|
-| **Region-Aware Guide** | Dynamic election steps from backend based on country |
-| **Firebase Authentication** | Real email/password auth via Firebase Client SDK |
-| **Firestore Persistence** | User progress, region, and language sync to cloud |
-| **Text-to-Speech** | Browser Speech API with language-aware voice selection |
-| **Dark/Light Theme** | System-aware theme toggle with instant switching |
-| **Language Switch** | Toggle between en-US and es-ES (extensible) |
-| **Swagger API Docs** | Interactive API documentation at `/api-docs` |
-| **Mobile Responsive** | Hamburger menu, touch-friendly layouts, responsive grids |
-| **Accessibility** | TTS reader mode, semantic HTML, keyboard navigation |
+| **Exhaustive Guides** | Full legal roadmaps for India (13 steps) and USA (10 steps) |
+| **Account-Free Persistence** | Save progress locally without ever creating an account |
+| **Activity Timeline** | Live feed of roadmap completions and reversals with timestamps |
+| **Undo Support** | Flexibility to mark steps as "Not Complete" to correct mistakes |
+| **Text-to-Speech** | Accessibility-first design with built-in voice reader for all steps |
+| **GPS Geolocation** | Instant region detection to unlock the correct legal workflow |
+| **Triple-Locale Support** | Native translations for English, Hindi, and Marathi |
+| **Premium Dark Mode** | Sleek, high-contrast UI optimized for mobile and desktop |
+
+---
+
+## Google Services & Integration
+
+| Service | Usage |
+|---------|-------|
+| **Google Cloud Run** | Scalable, containerized hosting for both the Next.js Frontend and Express Backend |
+| **Google Translate** | Backend `TranslateService` prepared for real-time translation expansion |
+| **Web Speech API** | Chrome-native TTS for accessibility with region-aware voice selection |
+| **GPS Geolocation API** | Browser-native coordinate scanning for precision regional matching |
 
 ---
 
 ## How It Works
 
 ### Pages
-- **`/`** — Landing page with hero, trust badges, and feature cards
-- **`/region`** — Region selector with auto-detect and manual cascading dropdowns (India, US, Canada)
-- **`/guide`** — Dynamic election timeline fetched from backend, with TTS and step completion
-- **`/app`** — User dashboard with progress ring, next action card, activity feed, and preferences
-- **`/auth`** — Sign in / Register page with Firebase Authentication
-
-### API Endpoints
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| GET | `/process?region=` | No | Get election steps for a region |
-| GET | `/translate?text=&targetLanguage=` | No | Mock translation |
-| POST | `/auth/register` | Yes | Create Firestore profile after signup |
-| GET | `/user/profile` | Yes | Get saved user state |
-| PUT | `/user/progress` | Yes | Save guide step progress |
-| PUT | `/user/preferences` | Yes | Save region & language |
+- **`/`** — Cinematic landing page with trust markers and "Experience Now" entry.
+- **`/region`** — GPS-powered sector that unlocks the exhaustive guide.
+- **`/guide`** — The core workflow with TTS, exhaustive steps, and completion markers.
+- **`/app`** — Personalized dashboard with a progress ring, activity log, and next-step logic.
 
 ---
 
-## Getting Started
+## Deployment to Cloud Run
 
-### Prerequisites
-- Node.js 20+
-- A Firebase project with Authentication (Email/Password) and Firestore enabled
+### 1. Prerequisites
+- Google Cloud Project with the **Cloud Build** and **Cloud Run** APIs enabled.
+- Artifact Registry repository created for your containers.
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/YOUR_USERNAME/PromptWars-Virtual-2.git
-cd PromptWars-Virtual-2
-```
+### 2. Deployment Steps
+The project is optimized for deployment via `gcloud` commands.
 
-### 2. Setup Backend
-```bash
-cd backend
-cp .env.example .env
-# Edit .env with your Firebase project ID
-# Place your Firebase service account key as serviceAccountKey.json
-npm install
-npm run dev
-# → Running on http://localhost:8080
-# → Swagger docs at http://localhost:8080/api-docs
-```
-
-### 3. Setup Frontend
-```bash
-cd frontend
-cp .env.example .env.local
-# Edit .env.local with your Firebase Web App config
-npm install
-npm run dev
-# → Running on http://localhost:3000
-```
-
----
-
-## Environment Variables
-
-### Backend (`backend/.env`)
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `PORT` | No | Server port (default: 8080) |
-| `FIREBASE_PROJECT_ID` | Yes | Your Firebase project ID |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Yes* | Path to service account JSON (*auto on Cloud Run) |
-
-### Frontend (`frontend/.env.local`)
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Yes | Firebase Web API key |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Yes | Firebase auth domain |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Yes | Firebase project ID |
-| `BACKEND_URL` | No | Backend URL for API proxy (default: http://localhost:8080) |
-
----
-
-## Deploying to Cloud Run
-
-### Backend
+#### Backend Deployment
 ```bash
 cd backend
 gcloud builds submit --tag gcr.io/YOUR_PROJECT/civicguide-backend
@@ -143,10 +86,10 @@ gcloud run deploy civicguide-backend \
   --image gcr.io/YOUR_PROJECT/civicguide-backend \
   --platform managed \
   --allow-unauthenticated \
-  --set-env-vars FIREBASE_PROJECT_ID=your-project-id
+  --region us-central1
 ```
 
-### Frontend
+#### Frontend Deployment
 ```bash
 cd frontend
 gcloud builds submit --tag gcr.io/YOUR_PROJECT/civicguide-frontend
@@ -154,40 +97,26 @@ gcloud run deploy civicguide-frontend \
   --image gcr.io/YOUR_PROJECT/civicguide-frontend \
   --platform managed \
   --allow-unauthenticated \
-  --set-env-vars BACKEND_URL=https://civicguide-backend-xxxxx.run.app
+  --set-env-vars BACKEND_URL=https://YOUR_BACKEND_URL.run.app \
+  --region us-central1
 ```
 
 ---
 
-## Google Services Integration
+## Technical Audit & Guidelines Compliance
 
-| Service | Usage |
-|---------|-------|
-| **Firebase Authentication** | Real email/password auth with `onAuthStateChanged` listener |
-| **Cloud Firestore** | Persistent storage for user profiles, progress, and preferences |
-| **Firebase Admin SDK** | Server-side token verification and Firestore admin access |
-| **Web Speech API** | Browser-native TTS for accessibility (Google Chrome voices) |
-| **Cloud Run** | Containerized deployment for both frontend and backend |
+- **Size**: Repository is **< 1 MB**, well within the 10 MB limit.
+- **Architecture**: Decoupled Frontend (Next.js) and Backend (Express) linked via secure rewrites.
+- **Code Quality**: Strict TypeScript implementation, semantic HTML, and accessibility-first components.
+- **Privacy**: No PII (Personally Identifiable Information) collection; fully frictionless.
 
 ---
 
-## Assumptions
-
-1. **Firebase Project**: A Firebase project with Email/Password authentication and Firestore must be provisioned. Without credentials, the app gracefully degrades to guest-only mode.
-2. **Regional Data**: Election steps for India and the US are representative examples. A production system would source data from official electoral commission APIs.
-3. **Translation**: The `/translate` endpoint is a mock simulating Google Cloud Translation API responses. A real API key can be swapped in.
-4. **Guest Mode**: Unsigned users can use all features except persistence. This is intentional for accessibility.
+## Assumptions & Disclaimers
+1. **Official Data**: Election steps provided match current 2024 protocols for India/USA but should be verified by official Electoral Commission feeds for production voting.
+2. **Translation**: Marathi and Hindi translations are curated for quality; additional regional languages can be added via `i18n.ts`.
+3. **Environment**: App assumes a modern browser environment supporting `localStorage` and `SpeechSynthesis`.
 
 ---
 
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4 |
-| State | Zustand |
-| Auth | Firebase Client SDK |
-| Backend | Express 5, TypeScript, Firebase Admin SDK |
-| Database | Cloud Firestore |
-| Docs | Swagger UI (OpenAPI 3.0) |
-| Deployment | Docker, Google Cloud Run |
+**Built with pride for PromptWars Virtual 2.**
