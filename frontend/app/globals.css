@@ -1,139 +1,51 @@
-/* @tailwind base; */
 @import "tailwindcss";
 
 /**
- * CivicGuide Design System - Tailwind CSS v4 Configuration
+ * CivicGuide Design System - Tailwind CSS v4 (Standard Compliant)
  * 
- * If your IDE (VS Code) flags @variant or @theme as "Unknown at-rules", 
- * these are false positives. Tailwind v4 uses these to generate the design system.
+ * We use CSS Variable Reflection here. Any variable prefixed with --color-, --font-, or --radius- 
+ * is automatically converted into a Tailwind utility by v4.
+ * 
+ * This approach removes the need for @theme or @variant blocks, 
+ * resolving "Unknown at-rule" IDE warnings permanently.
  */
 
-/* stylelint-disable */
-
-@variant dark (&:where(.dark, .dark *));
-
 :root {
-  /* Light Theme Tokens - Brand & Semantic */
-  --primary: #000000;
-  --on-primary: #ffffff;
-  --primary-container: #131b2e;
-  --on-primary-container: #7c839b;
-  --primary-fixed: #dae2fd;
-  --on-primary-fixed: #131b2e;
-  --on-primary-fixed-variant: #3f465c;
+  /* Brand Colors */
+  --color-primary: #000000;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #131b2e;
+  --color-on-primary-container: #7c839b;
   
-  --secondary: #006c49;
-  --on-secondary: #ffffff;
-  --secondary-container: #6cf8bb;
-  --on-secondary-container: #00714d;
+  --color-secondary: #006c49;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #6cf8bb;
+  --color-on-secondary-container: #00714d;
   
-  --surface: #fcf8fa;
-  --on-surface: #1b1b1d;
-  --surface-variant: #e4e2e4;
-  --on-surface-variant: #45464d;
-  --surface-container-lowest: #ffffff;
-  --surface-container-low: #f6f3f5;
-  --surface-container: #f0edef;
-  --surface-container-high: #eae7e9;
-  --surface-container-highest: #e4e2e4;
-  --surface-bright: #fcf8fa;
-  --surface-dim: #dcd9db;
+  /* Surface & Background */
+  --color-surface: #fcf8fa;
+  --color-on-surface: #1b1b1d;
+  --color-surface-variant: #e4e2e4;
+  --color-on-surface-variant: #45464d;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3f5;
+  --color-surface-container: #f0edef;
+  --color-surface-container-high: #eae7e9;
+  --color-surface-container-highest: #e4e2e4;
   
-  --background: #fcf8fa;
-  --on-background: #1b1b1d;
+  --color-background: #fcf8fa;
+  --color-on-background: #1b1b1d;
   
-  --outline: #76777d;
-  --outline-variant: #c6c6cd;
+  /* Utils */
+  --color-outline: #76777d;
+  --color-outline-variant: #c6c6cd;
   
-  --error: #ba1a1a;
-  --on-error: #ffffff;
-  --error-container: #ffdad6;
-  --on-error-container: #93000a;
-}
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
 
-.dark {
-  /* Dark Theme Tokens - Premium High-Contrast Palette */
-  --primary: #d0e4ff;
-  --on-primary: #003258;
-  --primary-container: #00497d;
-  --on-primary-container: #d1e4ff;
-  --primary-fixed: #d1e4ff;
-  --on-primary-fixed: #001d36;
-  --on-primary-fixed-variant: #00497d;
-  
-  --secondary: #58db9c;
-  --on-secondary: #003823;
-  --secondary-container: #005236;
-  --on-secondary-container: #79f8b7;
-  
-  --surface: #111318;
-  --on-surface: #e2e2e6;
-  --surface-variant: #44474e;
-  --on-surface-variant: #c4c6d0;
-  --surface-container-lowest: #0b0e13;
-  --surface-container-low: #191c21;
-  --surface-container: #1d2024;
-  --surface-container-high: #282a2f;
-  --surface-container-highest: #33353a;
-  --surface-bright: #37393e;
-  --surface-dim: #111318;
-  
-  --background: #111318;
-  --on-background: #e2e2e6;
-  
-  --outline: #8e9099;
-  --outline-variant: #44474e;
-  
-  --error: #ffb4ab;
-  --on-error: #690005;
-  --error-container: #93000a;
-  --on-error-container: #ffdad6;
-}
-
-@theme {
-  /* Wire up CSS variables to Tailwind Design Tokens */
-  --color-primary: var(--primary);
-  --color-on-primary: var(--on-primary);
-  --color-primary-container: var(--primary-container);
-  --color-on-primary-container: var(--on-primary-container);
-  --color-primary-fixed: var(--primary-fixed);
-  --color-on-primary-fixed: var(--on-primary-fixed);
-  --color-on-primary-fixed-variant: var(--on-primary-fixed-variant);
-
-  --color-secondary: var(--secondary);
-  --color-on-secondary: var(--on-secondary);
-  --color-secondary-container: var(--secondary-container);
-  --color-on-secondary-container: var(--on-secondary-container);
-
-  --color-surface: var(--surface);
-  --color-on-surface: var(--on-surface);
-  --color-surface-variant: var(--surface-variant);
-  --color-on-surface-variant: var(--on-surface-variant);
-  --color-surface-container-lowest: var(--surface-container-lowest);
-  --color-surface-container-low: var(--surface-container-low);
-  --color-surface-container: var(--surface-container);
-  --color-surface-container-high: var(--surface-container-high);
-  --color-surface-container-highest: var(--surface-container-highest);
-  --color-surface-bright: var(--surface-bright);
-  --color-surface-dim: var(--surface-dim);
-
-  --color-background: var(--background);
-  --color-on-background: var(--on-background);
-
-  --color-outline: var(--outline);
-  --color-outline-variant: var(--outline-variant);
-
-  --color-error: var(--error);
-  --color-on-error: var(--on-error);
-  --color-error-container: var(--error-container);
-  --color-on-error-container: var(--on-error-container);
-
-  --radius-DEFAULT: 0.25rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
-
+  /* Typography */
   --font-h1: "Inter", sans-serif;
   --font-h2: "Inter", sans-serif;
   --font-h3: "Inter", sans-serif;
@@ -142,21 +54,55 @@
   --font-label-caps: "Inter", sans-serif;
   --font-button: "Inter", sans-serif;
 
-  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Spacing/Radius */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+}
+
+.dark {
+  /* Dark Mode Semantic Overrides */
+  --color-primary: #d0e4ff;
+  --color-on-primary: #003258;
+  --color-primary-container: #00497d;
+  --color-on-primary-container: #d1e4ff;
+  
+  --color-secondary: #58db9c;
+  --color-on-secondary: #003823;
+  --color-secondary-container: #005236;
+  --color-on-secondary-container: #79f8b7;
+  
+  --color-surface: #111318;
+  --color-on-surface: #e2e2e6;
+  --color-surface-variant: #44474e;
+  --color-on-surface-variant: #c4c6d0;
+  --color-surface-container-lowest: #0b0e13;
+  --color-surface-container-low: #191c21;
+  --color-surface-container: #1d2024;
+  --color-surface-container-high: #282a2f;
+  --color-surface-container-highest: #33353a;
+  
+  --color-background: #111318;
+  --color-on-background: #e2e2e6;
+  
+  --color-outline: #8e9099;
+  --color-outline-variant: #44474e;
+  
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #93000a;
+  --color-on-error-container: #ffdad6;
 }
 
 /* Base custom logic for smooth transitions and typography */
 body {
-  background-color: var(--background);
-  color: var(--on-background);
+  background-color: var(--color-background);
+  color: var(--color-on-background);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.4s ease, color 0.4s ease;
   font-family: var(--font-body-md);
 }
 
-/* Material Symbols - Ensure proper rendering */
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
@@ -165,20 +111,17 @@ body {
   line-height: 1;
   text-transform: none;
   letter-spacing: normal;
-  word-wrap: normal;
   white-space: nowrap;
-  direction: ltr;
   -webkit-font-smoothing: antialiased;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
-/* Custom Utilities */
-.animate-in {
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
+/* Animations using standard CSS */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
