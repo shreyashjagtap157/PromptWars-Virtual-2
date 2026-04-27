@@ -3,16 +3,18 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useStore } from '@/store/useStore';
+import { useTranslation } from '@/lib/i18n';
 
 export function Sidebar() {
   const pathname = usePathname();
   const { theme, setTheme, language, setLanguage } = useStore();
+  const { t } = useTranslation(language);
 
   const navItems = [
-    { name: 'Dashboard', icon: 'dashboard', href: '/app' },
-    { name: 'My Guide', icon: 'map', href: '/guide' },
-    { name: 'Region', icon: 'location_on', href: '/region' },
-    { name: 'Multilingual', icon: 'translate', href: '/translate' },
+    { name: t('nav_dashboard'), icon: 'dashboard', href: '/app' },
+    { name: t('nav_guide'), icon: 'map', href: '/guide' },
+    { name: t('nav_region'), icon: 'location_on', href: '/region' },
+    { name: t('nav_multilingual'), icon: 'translate', href: '/translate' },
   ];
 
   const languages = [
@@ -44,12 +46,9 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Preferences Section */}
       <div className="p-6 space-y-8 border-t border-outline-variant/10 bg-surface-container-low/20">
-        
-        {/* Language Switcher */}
         <div className="space-y-3">
-          <span className="font-label-caps text-[10px] uppercase tracking-widest text-on-surface-variant font-black">Language</span>
+          <span className="font-label-caps text-[10px] uppercase tracking-widest text-on-surface-variant font-black">{t('label_language')}</span>
           <div className="grid grid-cols-1 gap-2">
             {languages.map((lang) => (
               <button 
@@ -62,17 +61,16 @@ export function Sidebar() {
           </div>
         </div>
 
-        {/* Theme Toggle */}
         <div className="space-y-3">
-          <span className="font-label-caps text-[10px] uppercase tracking-widest text-on-surface-variant font-black">Theme</span>
+          <span className="font-label-caps text-[10px] uppercase tracking-widest text-on-surface-variant font-black">{t('label_theme')}</span>
           <div className="flex bg-surface-container-highest rounded-xl p-1 gap-1">
-            {(['light', 'dark'] as const).map((t) => (
+            {(['light', 'dark'] as const).map((tVal) => (
               <button
-                key={t}
-                onClick={() => setTheme(t)}
-                className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all cursor-pointer ${theme === t ? 'bg-surface text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}>
+                key={tVal}
+                onClick={() => setTheme(tVal)}
+                className={`flex-1 flex items-center justify-center py-2 rounded-lg transition-all cursor-pointer ${theme === tVal ? 'bg-surface text-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'}`}>
                 <span className="material-symbols-outlined text-[18px]">
-                  {t === 'light' ? 'light_mode' : 'dark_mode'}
+                  {tVal === 'light' ? 'light_mode' : 'dark_mode'}
                 </span>
               </button>
             ))}
