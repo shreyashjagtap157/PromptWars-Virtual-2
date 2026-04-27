@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect, useMemo } from 'react';
 import { useStore } from '@/store/useStore';
+import { useTranslation } from '@/lib/i18n';
 import { ReaderControls } from './ReaderControls';
 
 interface Step {
@@ -11,7 +12,8 @@ interface Step {
 }
 
 export function StepTimeline() {
-  const { region, guideProgress, updateGuideProgress } = useStore();
+  const { region, guideProgress, updateGuideProgress, language } = useStore();
+  const { t } = useTranslation(language);
   const [steps, setSteps] = useState<Step[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,13 +28,15 @@ export function StepTimeline() {
           ? `/api/process?region=${encodeURIComponent(queryRegion)}`
           : `/api/process`;
         
-        // Add cache busting to ensure latest 13-step guide loads
-        const response = await fetch(url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now());
+        const response = await fetch(url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now(), {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         if (!response.ok) throw new Error('Backend unavailable');
         const data = await response.json();
         
-        // Safety sort by order
         const sortedSteps = (data.steps || []).sort((a: any, b: any) => a.order - b.order);
+        console.log(`[StepTimeline] Loaded ${sortedSteps.length} steps for "${queryRegion}"`);
         setSteps(sortedSteps);
       } catch (err: any) {
         setError(err.message);
@@ -44,17 +48,13 @@ export function StepTimeline() {
     fetchSteps();
   }, [region?.country]);
 
-  // Derive step statuses from store progress
   const stepsWithStatus = useMemo(() => {
     if (steps.length === 0) return [];
     return steps.map((step, index) => {
       const storedStatus = guideProgress[step.id];
       if (storedStatus) return { ...step, status: storedStatus };
       
-      // Logic for determining next active step
-      const isFirst = index === 0;
       const allPrevCompleted = steps.slice(0, index).every(s => guideProgress[s.id] === 'completed');
-      
       if (allPrevCompleted) {
         return { ...step, status: 'active' as const };
       }
@@ -62,7 +62,6 @@ export function StepTimeline() {
     });
   }, [steps, guideProgress]);
 
-  // Ensure progress state contains at least the first step as active if nothing is done
   useEffect(() => {
     if (steps.length > 0 && Object.keys(guideProgress).length === 0) {
       updateGuideProgress(steps[0].id, 'active');
@@ -90,7 +89,7 @@ export function StepTimeline() {
       <div className="p-10 text-center text-error font-body-md bg-error-container/20 border border-error/30 rounded-2xl mt-8">
         <span className="material-symbols-outlined text-4xl mb-3 block">cloud_off</span>
         <h3 className="font-h3 text-lg font-bold mb-1">Timeline Offline</h3>
-        <p className="opacity-70">Please start the backend service to access the exhaustive 13-step guide.</p>
+        <p className="opacity-70">Please start the backend service to access the guide.</p>
         <span className="text-xs bg-error/10 px-2 py-1 rounded mt-4 inline-block">Error: {error}</span>
       </div>
     );
@@ -122,10 +121,10 @@ export function StepTimeline() {
                    <div className="flex items-center gap-3 mb-1.5 flex-wrap">
                       <h3 className={`font-h3 text-xl font-bold tracking-tight ${isActive ? 'text-primary' : 'text-on-surface'}`}>{step.title}</h3>
                       {isActive && (
-                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-error text-on-error shadow-sm shadow-error/30 animate-pulse-slow">Action Needed</span>
+                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-error text-on-error shadow-sm shadow-error/30 animate-pulse-slow">{t('guide_action_needed')}</span>
                       )}
                       {isCompleted && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-secondary-container text-on-secondary-container">Verified</span>
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-secondary-container text-on-secondary-container">{t('guide_verified')}</span>
                       )}
                    </div>
                    <p className="font-label-caps text-[11px] text-on-surface-variant flex items-center gap-2 uppercase tracking-wide opacity-70">
@@ -134,12 +133,13 @@ export function StepTimeline() {
                    </p>
                  </div>
                  
-                 {isActive && (
+                 {/* Clickable "I have completed this" — shown for active AND pending steps */}
+                 {!isCompleted && (
                    <button 
                      onClick={() => updateGuideProgress(step.id, 'completed')}
-                     className="shrink-0 bg-primary text-on-primary px-5 py-2.5 rounded-xl font-button text-sm hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2 active:scale-95">
+                     className="shrink-0 bg-primary text-on-primary px-5 py-2.5 rounded-xl font-button text-sm hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                     I have completed this
+                     {t('guide_completed_btn')}
                    </button>
                  )}
                </div>
@@ -152,9 +152,7 @@ export function StepTimeline() {
                  
                  <div className="flex items-center justify-between gap-4">
                     <ReaderControls text={step.description} />
-                    {isActive && (
-                      <div className="text-[10px] font-bold text-primary italic">Step {index + 1} of {steps.length}</div>
-                    )}
+                    <div className="text-[10px] font-bold text-on-surface-variant opacity-50">{t('guide_step_of', { curr: index + 1, total: steps.length })}</div>
                  </div>
                </div>
             </div>

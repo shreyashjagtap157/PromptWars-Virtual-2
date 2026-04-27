@@ -1,14 +1,13 @@
 "use client"
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { useTranslation } from '@/lib/i18n';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-  const { user, region, guideProgress, language } = useStore();
+  const { region, guideProgress, language } = useStore();
   const { t } = useTranslation(language);
   const [totalStepCount, setTotalStepCount] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchStats() {
@@ -17,13 +16,14 @@ export default function DashboardPage() {
         const url = queryRegion 
           ? `/api/process?region=${encodeURIComponent(queryRegion)}` 
           : `/api/process`;
-        const res = await fetch(url + '?v=' + Date.now());
+        const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now(), {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         const data = await res.json();
         setTotalStepCount(data.steps?.length || 0);
       } catch (err) {
         console.error("Dashboard fetch failed", err);
-      } finally {
-        setIsLoading(false);
       }
     }
     fetchStats();
@@ -49,9 +49,16 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="lg:col-span-2 p-8 bg-surface-container-lowest border border-outline-variant/30 rounded-[32px] shadow-sm flex flex-col md:flex-row items-center gap-10">
           <div className="w-40 h-40 rounded-full flex items-center justify-center relative bg-surface-container-low">
-             <svg className="absolute inset-0 w-full h-full -rotate-90 transform" viewBox="0 0 36 36">
+             {/* Clockwise progress ring */}
+             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)' }}>
                <circle cx="18" cy="18" r="15.9155" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-secondary opacity-10" />
-               <path className="text-secondary transition-all duration-1000 ease-in-out" strokeDasharray={`${circumference}`} strokeDashoffset={`${offset}`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+               <circle
+                 cx="18" cy="18" r="15.9155"
+                 fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                 className="text-secondary transition-all duration-1000 ease-in-out"
+                 strokeDasharray={circumference}
+                 strokeDashoffset={offset}
+               />
              </svg>
              <div className="text-center relative z-10">
                <span className="block font-h2 text-3xl font-black text-on-surface">{progressPct}%</span>
@@ -72,7 +79,7 @@ export default function DashboardPage() {
         <div className="p-8 bg-primary/5 border border-primary/20 rounded-[32px] overflow-hidden flex flex-col justify-between h-full">
            <div className="relative z-10">
              <h3 className="font-h3 text-xl font-black text-primary mb-2">{t('dash_verified')}</h3>
-             <p className="font-body-md text-on-surface-variant text-sm">Your ID is mapped to local laws.</p>
+             <p className="font-body-md text-on-surface-variant text-sm">{t('dash_id_mapped')}</p>
            </div>
            <div className="mt-8 flex items-center gap-3">
              <div className="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center">
@@ -88,13 +95,13 @@ export default function DashboardPage() {
           <div className="px-8 py-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low/30">
             <h3 className="font-h3 text-lg font-bold">{t('dash_recent')}</h3>
           </div>
-          <div className="p-8 flex-1 italic text-on-surface-variant opacity-40 text-sm">Synchronized with election database...</div>
+          <div className="p-8 flex-1 italic text-on-surface-variant opacity-40 text-sm">{t('dash_synced')}</div>
         </div>
         <div className="flex flex-col bg-surface border border-outline-variant/30 rounded-[32px] overflow-hidden min-h-full">
           <div className="px-8 py-6 border-b border-outline-variant/30 flex justify-between items-center bg-surface-container-low/30">
             <h3 className="font-h3 text-lg font-bold">{t('dash_help')}</h3>
           </div>
-          <div className="p-8 flex-1 italic text-on-surface-variant opacity-40 text-sm">Agent support available 24/7.</div>
+          <div className="p-8 flex-1 italic text-on-surface-variant opacity-40 text-sm">{t('dash_agent')}</div>
         </div>
       </div>
     </main>

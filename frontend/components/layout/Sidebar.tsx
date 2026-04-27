@@ -14,7 +14,6 @@ export function Sidebar() {
     { name: t('nav_dashboard'), icon: 'dashboard', href: '/app' },
     { name: t('nav_guide'), icon: 'map', href: '/guide' },
     { name: t('nav_region'), icon: 'location_on', href: '/region' },
-    { name: t('nav_multilingual'), icon: 'translate', href: '/translate' },
   ];
 
   const languages = [
@@ -47,6 +46,7 @@ export function Sidebar() {
       </nav>
 
       <div className="p-6 space-y-8 border-t border-outline-variant/10 bg-surface-container-low/20">
+        {/* Language Switcher — purely client-side, no backend call */}
         <div className="space-y-3">
           <span className="font-label-caps text-[10px] uppercase tracking-widest text-on-surface-variant font-black">{t('label_language')}</span>
           <div className="grid grid-cols-1 gap-2">
@@ -61,6 +61,7 @@ export function Sidebar() {
           </div>
         </div>
 
+        {/* Theme Toggle */}
         <div className="space-y-3">
           <span className="font-label-caps text-[10px] uppercase tracking-widest text-on-surface-variant font-black">{t('label_theme')}</span>
           <div className="flex bg-surface-container-highest rounded-xl p-1 gap-1">
