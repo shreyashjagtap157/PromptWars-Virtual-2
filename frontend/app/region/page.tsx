@@ -1,23 +1,19 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useStore } from '@/store/useStore';
 import { useTranslation } from '@/lib/i18n';
 import { useRouter } from 'next/navigation';
 
 export default function RegionPage() {
-  const { setRegion, region, language } = useStore();
+  const setRegion = useStore((state) => state.setRegion);
+  const region = useStore((state) => state.region);
+  const language = useStore((state) => state.language);
   const { t } = useTranslation(language);
   const router = useRouter();
   const [isLocating, setIsLocating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!region) {
-      handleAutoDetect();
-    }
-  }, []);
-
-  const handleAutoDetect = () => {
+  const handleAutoDetect = useCallback(() => {
     if (!navigator.geolocation) {
       setError("Geolocation is not supported by your browser.");
       return;
@@ -28,9 +24,14 @@ export default function RegionPage() {
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
         try {
           const { latitude, longitude } = position.coords;
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`);
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`, {
+            signal: controller.signal,
+          });
           const data = await res.json();
           if (data && data.address) {
             const detectedRegion = {
@@ -40,19 +41,30 @@ export default function RegionPage() {
             };
             setRegion(detectedRegion);
           }
-        } catch (err) {
+        } catch {
           setError("Reverse geocoding failed. Using IP fallback.");
         } finally {
+          clearTimeout(timeoutId);
           setIsLocating(false);
         }
       },
-      (err) => {
+      (error) => {
         setIsLocating(false);
-        setError(err.code === 1 ? "Permission denied." : "Location unavailable.");
+        setError(error.code === 1 ? "Permission denied." : "Location unavailable.");
       },
       { timeout: 10000 }
     );
-  };
+  }, [setRegion]);
+
+  useEffect(() => {
+    if (!region) {
+      const timerId = window.setTimeout(() => {
+        handleAutoDetect();
+      }, 0);
+
+      return () => window.clearTimeout(timerId);
+    }
+  }, [region, handleAutoDetect]);
 
   const manualSelections = [
     { country: 'India', flag: '🇮🇳' },

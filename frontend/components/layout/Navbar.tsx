@@ -6,8 +6,20 @@ import { useStore } from '@/store/useStore';
 import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 
+const MOBILE_NAV_LINKS = [
+  { name: 'Home', href: '/', icon: 'home' },
+  { name: 'My Guide', href: '/guide', icon: 'description' },
+  { name: 'Region', href: '/region', icon: 'location_on' },
+  { name: 'Dashboard', href: '/app', icon: 'person' },
+];
+
+const SUPPORTED_LANGUAGE_CODES = ['en-US', 'hi-IN', 'mr-IN'] as const;
+
 export function Navbar() {
-  const { theme, setTheme, language, setLanguage } = useStore();
+  const theme = useStore((state) => state.theme);
+  const setTheme = useStore((state) => state.setTheme);
+  const language = useStore((state) => state.language);
+  const setLanguage = useStore((state) => state.setLanguage);
   const { user, signOut } = useAuth();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -16,12 +28,11 @@ export function Navbar() {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  const navLinks = [
-    { name: 'Home', href: '/', icon: 'home' },
-    { name: 'My Guide', href: '/guide', icon: 'description' },
-    { name: 'Region', href: '/region', icon: 'location_on' },
-    { name: 'Dashboard', href: '/app', icon: 'person' },
-  ];
+  const toggleLanguage = () => {
+    const currentIndex = SUPPORTED_LANGUAGE_CODES.indexOf(language as (typeof SUPPORTED_LANGUAGE_CODES)[number]);
+    const nextLanguage = SUPPORTED_LANGUAGE_CODES[(currentIndex + 1) % SUPPORTED_LANGUAGE_CODES.length];
+    setLanguage(nextLanguage);
+  };
 
   return (
     <>
@@ -33,7 +44,7 @@ export function Navbar() {
         
         <div className="flex items-center gap-sm">
           <button 
-            onClick={() => setLanguage(language === 'en-US' ? 'es-ES' : 'en-US')}
+            onClick={toggleLanguage}
             className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 transition-all p-2 rounded-full">
             <span className="material-symbols-outlined text-[20px]">language</span>
           </button>
@@ -54,7 +65,7 @@ export function Navbar() {
       {menuOpen && (
         <div className="fixed top-16 left-0 right-0 z-30 bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 shadow-lg lg:hidden animate-in slide-in-from-top-2">
           <div className="flex flex-col py-2">
-            {navLinks.map((link) => {
+            {MOBILE_NAV_LINKS.map((link) => {
               const isActive = pathname === link.href || (pathname.startsWith(link.href) && link.href !== '/');
               return (
                 <Link

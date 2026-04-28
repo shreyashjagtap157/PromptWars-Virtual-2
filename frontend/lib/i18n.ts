@@ -1,4 +1,7 @@
-export const translations: Record<string, any> = {
+type TranslationDictionary = Record<string, string>;
+type TranslationCatalog = Record<string, TranslationDictionary>;
+
+export const translations: TranslationCatalog = {
   'en-US': {
     // Sidebar
     'nav_dashboard': 'Dashboard',
@@ -6,7 +9,7 @@ export const translations: Record<string, any> = {
     'nav_region': 'Region',
     'label_language': 'Language',
     'label_theme': 'Theme',
-    
+
     // Dashboard
     'dash_welcome': 'Hello',
     'dash_progress': 'Your Election Roadmap is {pct}% complete.',
@@ -22,7 +25,7 @@ export const translations: Record<string, any> = {
     'dash_agent': 'Agent support available 24/7.',
     'act_completed': 'Completed: {step}',
     'act_undone': 'Reverted: {step}',
-    
+
     // Guide
     'guide_header': 'Your Election Roadmap',
     'guide_select_region': 'Select region for exhaustive guide',
@@ -53,7 +56,7 @@ export const translations: Record<string, any> = {
     'nav_region': 'क्षेत्र',
     'label_language': 'भाषा',
     'label_theme': 'थीम',
-    
+
     'dash_welcome': 'नमस्ते',
     'dash_progress': 'आपका चुनाव रोडमैप {pct}% पूरा हो गया है।',
     'dash_keep_going': 'जारी रखें!',
@@ -125,7 +128,7 @@ export const translations: Record<string, any> = {
     'nav_region': 'प्रदेश',
     'label_language': 'भाषा',
     'label_theme': 'थीम',
-    
+
     'dash_welcome': 'नमस्कार',
     'dash_progress': 'तुमचा निवडणूक रोडमॅप {pct}% पूर्ण झाला आहे.',
     'dash_keep_going': 'सुरू ठेवा!',
@@ -195,9 +198,9 @@ export const translations: Record<string, any> = {
 
 export const useTranslation = (lang: string) => {
   const dict = translations[lang] || translations['en-US'];
-  
+
   return {
-    t: (key: string, params?: Record<string, any>) => {
+    t: (key: string, params?: Record<string, string | number>) => {
       let str = dict[key] || translations['en-US'][key] || key;
       if (params) {
         Object.entries(params).forEach(([k, v]) => {

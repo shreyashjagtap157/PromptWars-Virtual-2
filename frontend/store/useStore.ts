@@ -22,7 +22,7 @@ interface AppState {
   theme: 'dark' | 'light' | 'system';
   guideProgress: Record<string, 'pending' | 'active' | 'completed'>;
   activityLog: Activity[];
-  
+
   setLogin: (status: boolean) => void;
   setRegion: (region: Region | null) => void;
   setLanguage: (lang: string) => void;
@@ -33,64 +33,144 @@ interface AppState {
   addActivity: (type: 'complete' | 'undo' | 'system', message: string, stepId?: string) => void;
 }
 
+const createActivityId = (): string => {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+    return crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+};
+
+const areRegionsEqual = (left: Region | null, right: Region | null): boolean => {
+  return left?.country === right?.country && left?.state === right?.state && left?.district === right?.district;
+};
+
+const areGuideProgressEqual = (
+  left: Record<string, 'pending' | 'active' | 'completed'>,
+  right: Record<string, 'pending' | 'active' | 'completed'>
+): boolean => {
+  const leftKeys = Object.keys(left);
+  const rightKeys = Object.keys(right);
+
+  if (leftKeys.length !== rightKeys.length) {
+    return false;
+  }
+
+  for (const key of leftKeys) {
+    if (left[key] !== right[key]) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+export const syncThemeClass = (theme: AppState['theme']): void => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const shouldUseDark = theme === 'dark' || (theme === 'system' && prefersDark);
+  document.documentElement.classList.toggle('dark', shouldUseDark);
+};
+
 export const useStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isLoggedIn: false,
       region: null,
       language: 'en-US',
       theme: 'system',
       guideProgress: {},
       activityLog: [],
-      
-      setLogin: (status) => set({ isLoggedIn: status }),
-      setRegion: (region) => set((state) => {
-        // Prevent clearing if same region
-        if (state.region?.country === region?.country) return { region };
-        return { 
-          region, 
-          guideProgress: {},
-          activityLog: [{ id: Math.random().toString(), type: 'system', message: `Region updated to ${region?.country || 'Unknown'}`, timestamp: Date.now() }] 
-        };
-      }),
-      setLanguage: (language) => set({ language }),
-      setTheme: (theme) => {
-        set({ theme });
-        if (typeof window !== 'undefined') {
-          if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
+
+      setLogin: (status) => {
+        if (get().isLoggedIn === status) {
+          return;
         }
+
+        set({ isLoggedIn: status });
       },
-      updateGuideProgress: (stepId, status, title) => set((state) => {
-        const newProgress = { ...state.guideProgress, [stepId]: status };
-        let newLog = [...state.activityLog];
-        
-        if (title) {
-          if (status === 'completed') {
-            newLog.unshift({ id: Math.random().toString(), type: 'complete', message: `Completed: ${title}`, stepId, timestamp: Date.now() });
-          } else if (status === 'pending') {
-            newLog.unshift({ id: Math.random().toString(), type: 'undo', message: `Reverted: ${title}`, stepId, timestamp: Date.now() });
-          }
+      setRegion: (region) => {
+        if (areRegionsEqual(get().region, region)) {
+          return;
         }
-        
-        // Keep only last 10 activities to save storage
-        return {
-          guideProgress: newProgress,
-          activityLog: newLog.slice(0, 10)
-        };
-      }),
-      resetGuideProgress: () => set({ guideProgress: {}, activityLog: [] }),
-      setGuideProgress: (progress) => set({ guideProgress: progress }),
+
+        set({
+          region,
+          guideProgress: {},
+          activityLog: region
+            ? [{ id: createActivityId(), type: 'system', message: `Region updated to ${region.country || 'Unknown'}`, timestamp: Date.now() }]
+            : [],
+        });
+      },
+      setLanguage: (language) => {
+        if (get().language === language) {
+          return;
+        }
+
+        set({ language });
+      },
+      setTheme: (theme) => {
+        if (get().theme === theme) {
+          return;
+        }
+
+        set({ theme });
+        syncThemeClass(theme);
+      },
+      updateGuideProgress: (stepId, status, title) => {
+        if (get().guideProgress[stepId] === status && !title) {
+          return;
+        }
+
+        set((state) => {
+          const newProgress = { ...state.guideProgress, [stepId]: status };
+          const newLog = [...state.activityLog];
+
+          if (title) {
+            if (status === 'completed') {
+              newLog.unshift({ id: createActivityId(), type: 'complete', message: `Completed: ${title}`, stepId, timestamp: Date.now() });
+            } else if (status === 'pending') {
+              newLog.unshift({ id: createActivityId(), type: 'undo', message: `Reverted: ${title}`, stepId, timestamp: Date.now() });
+            }
+          }
+
+          return {
+            guideProgress: newProgress,
+            activityLog: newLog.slice(0, 10),
+          };
+        });
+      },
+      resetGuideProgress: () => {
+        const state = get();
+        if (Object.keys(state.guideProgress).length === 0 && state.activityLog.length === 0) {
+          return;
+        }
+
+        set({ guideProgress: {}, activityLog: [] });
+      },
+      setGuideProgress: (progress) => {
+        if (areGuideProgressEqual(get().guideProgress, progress)) {
+          return;
+        }
+
+        set({ guideProgress: progress });
+      },
       addActivity: (type, message, stepId) => set((state) => ({
-        activityLog: [{ id: Math.random().toString(), type, message, stepId, timestamp: Date.now() }, ...state.activityLog].slice(0, 10)
+        activityLog: [{ id: createActivityId(), type, message, stepId, timestamp: Date.now() }, ...state.activityLog].slice(0, 10)
       }))
     }),
     {
-      name: 'civic-guide-storage', // Key used in localStorage
-      // We don't need to persist theme class initialization here, standard Zustand state handling works
+      name: 'civic-guide-storage',
+      partialize: (state) => ({
+        region: state.region,
+        language: state.language,
+        theme: state.theme,
+        guideProgress: state.guideProgress,
+        activityLog: state.activityLog,
+      }),
     }
   )
 );

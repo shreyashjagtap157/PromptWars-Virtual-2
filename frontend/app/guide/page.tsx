@@ -3,31 +3,33 @@ import { useState, useEffect } from "react";
 import { StepTimeline } from "@/components/guide/StepTimeline";
 import { useStore } from "@/store/useStore";
 import { useTranslation } from "@/lib/i18n";
+import { fetchProcessStepCount } from "@/lib/process";
 import Link from "next/link";
 
 export default function GuidePage() {
-  const { region, guideProgress, language } = useStore();
+  const region = useStore((state) => state.region);
+  const guideProgress = useStore((state) => state.guideProgress);
+  const language = useStore((state) => state.language);
   const { t } = useTranslation(language);
   const [totalStepCount, setTotalStepCount] = useState<number>(0);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchCount() {
       try {
-        const queryRegion = region?.country || '';
-        const url = queryRegion 
-          ? `/api/process?region=${encodeURIComponent(queryRegion)}` 
-          : `/api/process`;
-        
-        const res = await fetch(url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now(), {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        setTotalStepCount(data.steps?.length || 0);
+        const count = await fetchProcessStepCount(region?.country);
+        if (!cancelled) {
+          setTotalStepCount(count);
+        }
       } catch { /* ignore */ }
     }
+
     fetchCount();
+
+    return () => {
+      cancelled = true;
+    };
   }, [region?.country]);
 
   const totalCompleted = Object.values(guideProgress).filter(s => s === 'completed').length;

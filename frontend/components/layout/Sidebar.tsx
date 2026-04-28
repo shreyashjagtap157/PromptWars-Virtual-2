@@ -1,5 +1,4 @@
 "use client"
-import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useStore } from '@/store/useStore';
@@ -7,7 +6,10 @@ import { useTranslation } from '@/lib/i18n';
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { theme, setTheme, language, setLanguage } = useStore();
+  const theme = useStore((state) => state.theme);
+  const setTheme = useStore((state) => state.setTheme);
+  const language = useStore((state) => state.language);
+  const setLanguage = useStore((state) => state.setLanguage);
   const { t } = useTranslation(language);
 
   const navItems = [

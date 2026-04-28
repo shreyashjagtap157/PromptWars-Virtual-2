@@ -1,12 +1,10 @@
-import React from 'react';
-
 export function FeatureCards() {
   return (
     <section className="px-6 md:px-12 py-xl max-w-7xl mx-auto">
       <div className="text-center mb-16">
         <h2 className="font-h2 text-h2 text-on-surface mb-4">Everything you need to vote confidently</h2>
-        <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
-          We've broken down complex institutional processes into clear, actionable steps.
+          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+          We&apos;ve broken down complex institutional processes into clear, actionable steps.
         </p>
       </div>
       

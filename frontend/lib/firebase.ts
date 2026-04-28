@@ -33,9 +33,9 @@ try {
 } catch (error) {
   console.error('Firebase initialization failed:', error);
   // Fallback to avoid breaking the layout build, though runtime auth will fail
-  app = {} as any;
-  clientAuth = {} as any;
-  db = {} as any;
+  app = {} as FirebaseApp;
+  clientAuth = {} as Auth;
+  db = {} as Firestore;
 }
 
 export { clientAuth, db };

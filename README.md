@@ -23,15 +23,29 @@ Navigating complex voting protocols is often the biggest hurdle to democratic pa
 To minimize deployment complexity and maximize performance, CivicGuide uses a **Unified Mono-Container** architecture.
 
 ### 1. Architecture Logic
-- **Gateway Layer**: Next.js (Frontend) acts as the primary entry point, listening on the Cloud Run `$PORT`. It handles all SSR rendering and static assets.
-- **Service Layer**: An Express.js (Backend) instance runs internally on port `3001`.
-- **Proxy Routing**: All requests to `/api/*` are transparently proxied by Next.js to `localhost:3001`, creating a seamless full-stack experience within a single service.
+- **Gateway Layer**: Next.js 16 (Frontend) is the primary entry point. It handles SSR, static assets, and route rewrites.
+- **Service Layer**: An Express.js (Backend) instance runs on `8080` in local development and on `3001` inside the provided container image.
+- **Proxy Routing**: All requests to `/api/*` are transparently proxied by Next.js to the backend, keeping the client configuration simple.
 - **Frictionless Persistence**: Instead of backend-driven auth, we utilize a persistent **Zustand Store** synced to `localStorage`. This ensures progress and preferences survive reloads without ever collecting PII (Personally Identifiable Information).
 
 ### 2. Multi-Language Engine
 - **Native Localization**: Built-in translation dictionaries for English, Hindi, and Marathi.
-- **Dynamic Guide Translation**: The roadmap engine fetches legal steps via ID, which are then localized in real-time on the client using the user's preferred language.
-- **Localized Activity Logs**: Recent historical actions (Complete/Undo) are translated on-the-fly in the dashboard feed.
+- **Dynamic Guide Translation**: The roadmap engine fetches legal steps by region, which are then localized in real time on the client using the user's preferred language.
+- **Localized Activity Logs**: Recent historical actions (Complete/Undo) are translated on the fly in the dashboard feed.
+
+### 3. Performance Work
+- **Shared guide cache**: The frontend deduplicates guide requests across the guide page, dashboard, and step timeline.
+- **Static roadmap payloads**: The backend serves prebuilt guide data instead of reconstructing the same arrays on every request.
+- **Translation caching**: Repeated translation requests are cached in memory to reduce external API calls.
+- **Render slicing**: Client components subscribe only to the Zustand fields they need, reducing unnecessary rerenders.
+- **Font loading**: Inter is loaded through `next/font`, eliminating an extra render-blocking stylesheet request.
+
+### 4. API Hardening
+- **Rate limiting**: Public and authenticated endpoints now have per-route request throttles to reduce abuse and protect external APIs.
+- **Request validation**: Process, translation, and user update payloads are validated before they reach the service layer.
+- **Request IDs and logs**: Each request gets a request ID and structured completion/error logging for easier debugging.
+- **Security headers**: The backend adds common hardening headers and a stricter CORS allowlist.
+- **Health endpoint**: A lightweight `/healthz` endpoint is available for uptime checks and deployment probes.
 
 ---
 
@@ -64,34 +78,43 @@ To minimize deployment complexity and maximize performance, CivicGuide uses a **
 
 ## 🛠️ Technical Implementation Details
 
-- **Frontend**: Next.js 15, React 19, Tailwind CSS v4, Zustand (Persistence).
+- **Frontend**: Next.js 16, React 19, Tailwind CSS v4, Zustand (Persistence).
 - **Backend**: Express 5, TypeScript, Swagger (API Discovery).
-- **Build System**: Multi-stage Docker build that tree-shakes dependencies to keep the image slim.
-- **Size**: Optimized to **~1.5 MB** source size, well within contest limits.
+- **Build System**: Multi-stage Docker build with standalone Next.js output for a slim runtime image.
+- **Efficiency**: Browser-side caching, backend in-memory caching, reduced rerenders, request-size limits, and stale fallback for guide data.
+- **Reliability**: Backend rate limiting, request validation, request IDs, and health checks.
+
+## ✅ Continuous Integration
+
+- The repository includes a GitHub Actions workflow at [.github/workflows/ci.yml](.github/workflows/ci.yml) that installs both apps, runs the backend build, runs the frontend lint step, and builds the frontend on every push and pull request.
 
 ---
 
 ## 🏁 How to Run Locally
 
-1. **Clone the repository**:
+1. **Install dependencies**:
    ```bash
-   git clone https://github.com/shreyashjagtap157/PromptWars-Virtual-2.git
+   cd backend && npm install
+   cd ../frontend && npm install
    ```
-2. **Install Root Dependencies**:
+2. **Run in development**:
    ```bash
-   npm install -g concurrently
+   # Terminal 1
+   cd backend
+   npm run dev
+
+   # Terminal 2
+   cd frontend
+   npm run dev
    ```
-3. **Build & Run (Unified Mode)**:
+   The frontend proxies `/api/*` to the backend automatically through [frontend/next.config.ts](frontend/next.config.ts).
+3. **Run production builds locally**:
    ```bash
-   # Building both frontend and backend
-   cd frontend && npm install && npm run build
-   cd ../backend && npm install && npm run build
-   
-   # Run concurrently from root
-   concurrently "PORT=3001 node backend/dist/index.js" "PORT=3000 node frontend/server.js"
+   cd backend && npm run build && npm start
+   cd ../frontend && npm run build && npm start
    ```
+   If the backend is hosted elsewhere, set `BACKEND_URL` before starting the frontend server.
 
 ---
 
 **Built with pride for PromptWars Virtual 2.**
-Virtual 2.**

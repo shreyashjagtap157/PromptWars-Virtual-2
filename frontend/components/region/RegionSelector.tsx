@@ -27,7 +27,8 @@ const COUNTRIES: Record<string, { states: Record<string, string[]> }> = {
 };
 
 export function RegionSelector() {
-  const { region, setRegion } = useStore();
+  const region = useStore((state) => state.region);
+  const setRegion = useStore((state) => state.setRegion);
   const router = useRouter();
   
   const [selectedCountry, setSelectedCountry] = useState(region?.country || '');

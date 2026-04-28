@@ -1,8 +1,8 @@
 "use client"
-import React from 'react';
+import { memo } from 'react';
 import { useTTS } from '@/hooks/useTTS';
 
-export function ReaderControls({ text }: { text: string }) {
+export const ReaderControls = memo(function ReaderControls({ text }: { text: string }) {
   const { speak, stop, isSpeaking, isSupported } = useTTS();
 
   if (!isSupported) return null;
@@ -27,4 +27,4 @@ export function ReaderControls({ text }: { text: string }) {
       )}
     </div>
   );
-}
+});

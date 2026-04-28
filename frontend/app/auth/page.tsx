@@ -30,12 +30,12 @@ export default function AuthPage() {
       } else {
         await signUp(email, password);
       }
-    } catch (err: any) {
-      const msg = err?.message || '';
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : '';
       if (msg.includes('CONFIGURATION_NOT_FOUND')) {
         setError('🔴 Email/Password auth is disabled. Please enable it in Firebase Console.');
       } else {
-        setError(err.message || 'Auth failed.');
+        setError(msg || 'Auth failed.');
       }
     } finally {
       setLoading(false);

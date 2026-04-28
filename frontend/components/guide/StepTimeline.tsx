@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useStore } from '@/store/useStore';
 import { useTranslation } from '@/lib/i18n';
 import { ReaderControls } from './ReaderControls';
+import { fetchProcessData } from '@/lib/process';
 
 interface Step {
   id: string;
@@ -12,41 +13,42 @@ interface Step {
 }
 
 export function StepTimeline() {
-  const { region, guideProgress, updateGuideProgress, language } = useStore();
+  const region = useStore((state) => state.region);
+  const guideProgress = useStore((state) => state.guideProgress);
+  const updateGuideProgress = useStore((state) => state.updateGuideProgress);
+  const language = useStore((state) => state.language);
   const { t } = useTranslation(language);
   const [steps, setSteps] = useState<Step[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
-    setHasMounted(true);
+    let cancelled = false;
+
     async function fetchSteps() {
       setIsLoading(true);
       setError(null);
       try {
-        const queryRegion = region?.country || '';
-        const url = queryRegion
-          ? `/api/process?region=${encodeURIComponent(queryRegion)}`
-          : `/api/process`;
-        
-        const response = await fetch(url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now(), {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        });
-        if (!response.ok) throw new Error('Backend unavailable');
-        const data = await response.json();
-        
-        const sortedSteps = (data.steps || []).sort((a: any, b: any) => a.order - b.order);
-        setSteps(sortedSteps);
-      } catch (err: any) {
-        setError(err.message);
+        const data = await fetchProcessData(region?.country);
+        if (!cancelled) {
+          setSteps(data.steps);
+        }
+      } catch (error: unknown) {
+        if (!cancelled) {
+          setError(error instanceof Error ? error.message : 'Failed to load guide steps');
+        }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
     
     fetchSteps();
+
+    return () => {
+      cancelled = true;
+    };
   }, [region?.country]);
 
   const stepsWithStatus = useMemo(() => {
@@ -69,7 +71,7 @@ export function StepTimeline() {
     }
   }, [steps, guideProgress, updateGuideProgress]);
 
-  if (!hasMounted || isLoading) {
+  if (isLoading) {
     return (
       <div className="mt-8 flex flex-col gap-8">
         {[1,2,3,4,5].map(i => (
