@@ -1,14 +1,20 @@
 .gcloudignore
 .git
 .gitignore
+
+# Ignore dependencies and build artifacts
 node_modules/
+**/node_modules/
 dist/
-build/
+**/dist/
 .next/
+**/.next/
+
+# Ignore local environment files
 .env*
-*.json
-!package.json
-!package-lock.json
-!tsconfig.json
-service-account.json
-serviceAccountKey.json
+**/.env*
+
+# Ignore secrets
+**/service-account.json
+**/serviceAccountKey.json
+**/*-firebase-adminsdk-*.json

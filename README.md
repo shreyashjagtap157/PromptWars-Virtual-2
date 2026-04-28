@@ -2,121 +2,96 @@
 
 > **PromptWars Virtual 2** | Civic Tech & Accessibility Vertical
 
-CivicGuide is a smart, dynamic election process assistant that eliminates all barriers to civic engagement. By replacing mandatory account registration with high-performance local persistence, CivicGuide provides a high-trust, account-free experience. 
+**Live Application**: [https://civicguide-609095350122.us-central1.run.app](https://civicguide-609095350122.us-central1.run.app)
+
+CivicGuide is a smart, dynamic election process assistant designed to eliminate all barriers to civic engagement. By replacing mandatory account registration with high-performance browser-local persistence, CivicGuide provides a high-trust, account-free experience.
 
 It guides users through exhaustive, region-specific election roadmaps (13 steps for India, 10 for USA) with Text-to-Speech accessibility and native multi-language support (English, Hindi, Marathi).
 
 ---
 
-## Chosen Vertical
+## 🏛️ Chosen Vertical
 
 **Civic Tech & Information Access**
 
-Navigating complex voting protocols can be the biggest barrier to democratic participation. CivicGuide solves this by providing "Frictionless Information Design" — zero sign-ups, instant GPS-based localization, and exhaustive step-by-step verified roadmaps tailored to the user's jurisdiction.
+Navigating complex voting protocols is often the biggest hurdle to democratic participation. CivicGuide solves this through **"Frictionless Information Design"** — zero sign-ups, instant GPS-based localization, and exhaustive step-by-step verified roadmaps tailored to the user's exact jurisdiction.
 
 ---
 
-## Approach & Logic
+## 🚀 The Approach: "Unified Full-Stack Container"
 
-### 1. Frictionless Architecture
-To maximize accessibility, we removed mandatory authentication. 
-- **Persistence**: All user progress, region selections, and language preferences are handled via a persistent **Zustand Store** synced to the browser's `localStorage`.
-- **Privacy**: No user data is stored on our servers, ensuring a privacy-first civic experience.
-- **Zero-Barrier**: Users can start their roadmap instantly upon opening the app.
+To minimize deployment complexity and maximize performance, CivicGuide uses a **Unified Mono-Container** architecture.
 
-### 2. Decision Logic
-- **Region Detection**: Automatically detects the user's country via IP-based geolocation (fallback) or manual selection.
-- **Exhaustive Roadmap Engine**: The backend serves specific legal protocols.
-  - **India**: 13 comprehensive steps covering ECI search, EPIC download, Form 17A signing, and VVPAT verification.
-  - **USA**: 10 steps covering SOS portal checks, overvote reviews, and optical scanner submission.
-- **Dynamic Translation**: Native dictionary-based translation system for UI and Guide content (English, Hindi, Marathi).
+### 1. Architecture Logic
+- **Gateway Layer**: Next.js (Frontend) acts as the primary entry point, listening on the Cloud Run `$PORT`. It handles all SSR rendering and static assets.
+- **Service Layer**: An Express.js (Backend) instance runs internally on port `3001`.
+- **Proxy Routing**: All requests to `/api/*` are transparently proxied by Next.js to `localhost:3001`, creating a seamless full-stack experience within a single service.
+- **Frictionless Persistence**: Instead of backend-driven auth, we utilize a persistent **Zustand Store** synced to `localStorage`. This ensures progress and preferences survive reloads without ever collecting PII (Personally Identifiable Information).
+
+### 2. Multi-Language Engine
+- **Native Localization**: Built-in translation dictionaries for English, Hindi, and Marathi.
+- **Dynamic Guide Translation**: The roadmap engine fetches legal steps via ID, which are then localized in real-time on the client using the user's preferred language.
+- **Localized Activity Logs**: Recent historical actions (Complete/Undo) are translated on-the-fly in the dashboard feed.
 
 ---
 
-## Features
+## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
-| **Exhaustive Guides** | Full legal roadmaps for India (13 steps) and USA (10 steps) |
+| **Exhaustive Guides** | 13-step Roadmap for India; 10-step for USA |
 | **Account-Free Persistence** | Save progress locally without ever creating an account |
-| **Activity Timeline** | Live feed of roadmap completions and reversals with timestamps |
-| **Undo Support** | Flexibility to mark steps as "Not Complete" to correct mistakes |
-| **Text-to-Speech** | Accessibility-first design with built-in voice reader for all steps |
-| **GPS Geolocation** | Instant region detection to unlock the correct legal workflow |
+| **Activity Timeline** | Live localized feed of roadmap completions and reversals |
+| **Undo / Revert** | Flexibility to manage roadmap status to correct mistakes |
+| **Text-to-Speech** | Accessibility reader with region-aware voice selection |
+| **GPS Geolocation** | Instant coordinate scanning to unlock legal workflows |
 | **Triple-Locale Support** | Native translations for English, Hindi, and Marathi |
-| **Premium Dark Mode** | Sleek, high-contrast UI optimized for mobile and desktop |
+| **Premium UI** | High-contrast Dark/Light mode with clockwise progress visuals |
 
 ---
 
-## Google Services & Integration
+## ☁️ Google Services Integration
 
 | Service | Usage |
 |---------|-------|
-| **Google Cloud Run** | Scalable, containerized hosting for both the Next.js Frontend and Express Backend |
-| **Google Translate** | Backend `TranslateService` prepared for real-time translation expansion |
-| **Web Speech API** | Chrome-native TTS for accessibility with region-aware voice selection |
-| **GPS Geolocation API** | Browser-native coordinate scanning for precision regional matching |
+| **Google Cloud Run** | Scalable hosting for the Unified Full-Stack container |
+| **Google Cloud Build** | Multi-stage production pipeline compiling Next.js and TypeScript |
+| **Cloud Billing** | Automated project linking for resource management |
+| **Web Speech API** | Chrome-native TTS for inclusive accessibility |
+| **Artifact Registry** | Secure container image management |
 
 ---
 
-## How It Works
+## 🛠️ Technical Implementation Details
 
-### Pages
-- **`/`** — Cinematic landing page with trust markers and "Experience Now" entry.
-- **`/region`** — GPS-powered sector that unlocks the exhaustive guide.
-- **`/guide`** — The core workflow with TTS, exhaustive steps, and completion markers.
-- **`/app`** — Personalized dashboard with a progress ring, activity log, and next-step logic.
-
----
-
-## Deployment to Cloud Run
-
-### 1. Prerequisites
-- Google Cloud Project with the **Cloud Build** and **Cloud Run** APIs enabled.
-- Artifact Registry repository created for your containers.
-
-### 2. Deployment Steps
-The project is optimized for deployment via `gcloud` commands.
-
-#### Backend Deployment
-```bash
-cd backend
-gcloud builds submit --tag gcr.io/YOUR_PROJECT/civicguide-backend
-gcloud run deploy civicguide-backend \
-  --image gcr.io/YOUR_PROJECT/civicguide-backend \
-  --platform managed \
-  --allow-unauthenticated \
-  --region us-central1
-```
-
-#### Frontend Deployment
-```bash
-cd frontend
-gcloud builds submit --tag gcr.io/YOUR_PROJECT/civicguide-frontend
-gcloud run deploy civicguide-frontend \
-  --image gcr.io/YOUR_PROJECT/civicguide-frontend \
-  --platform managed \
-  --allow-unauthenticated \
-  --set-env-vars BACKEND_URL=https://YOUR_BACKEND_URL.run.app \
-  --region us-central1
-```
+- **Frontend**: Next.js 15, React 19, Tailwind CSS v4, Zustand (Persistence).
+- **Backend**: Express 5, TypeScript, Swagger (API Discovery).
+- **Build System**: Multi-stage Docker build that tree-shakes dependencies to keep the image slim.
+- **Size**: Optimized to **~1.5 MB** source size, well within contest limits.
 
 ---
 
-## Technical Audit & Guidelines Compliance
+## 🏁 How to Run Locally
 
-- **Size**: Repository is **< 1 MB**, well within the 10 MB limit.
-- **Architecture**: Decoupled Frontend (Next.js) and Backend (Express) linked via secure rewrites.
-- **Code Quality**: Strict TypeScript implementation, semantic HTML, and accessibility-first components.
-- **Privacy**: No PII (Personally Identifiable Information) collection; fully frictionless.
-
----
-
-## Assumptions & Disclaimers
-1. **Official Data**: Election steps provided match current 2024 protocols for India/USA but should be verified by official Electoral Commission feeds for production voting.
-2. **Translation**: Marathi and Hindi translations are curated for quality; additional regional languages can be added via `i18n.ts`.
-3. **Environment**: App assumes a modern browser environment supporting `localStorage` and `SpeechSynthesis`.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/shreyashjagtap157/PromptWars-Virtual-2.git
+   ```
+2. **Install Root Dependencies**:
+   ```bash
+   npm install -g concurrently
+   ```
+3. **Build & Run (Unified Mode)**:
+   ```bash
+   # Building both frontend and backend
+   cd frontend && npm install && npm run build
+   cd ../backend && npm install && npm run build
+   
+   # Run concurrently from root
+   concurrently "PORT=3001 node backend/dist/index.js" "PORT=3000 node frontend/server.js"
+   ```
 
 ---
 
 **Built with pride for PromptWars Virtual 2.**
+Virtual 2.**
