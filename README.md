@@ -88,6 +88,16 @@ To minimize deployment complexity and maximize performance, CivicGuide uses a **
 
 - The repository includes a GitHub Actions workflow at [.github/workflows/ci.yml](.github/workflows/ci.yml) that installs both apps, runs the backend build, runs the frontend lint step, and builds the frontend on every push and pull request.
 
+## ☁️ Deploy to Cloud Run
+
+Run the deploy command from the repository root so Cloud Run builds the root `Dockerfile` and ships the current frontend/backend combo:
+
+```bash
+gcloud run deploy civicguide --source . --region us-central1 --project gen-lang-client-0949773976 --allow-unauthenticated --platform managed
+```
+
+If you deploy to another project or region, replace the `project` and `region` values accordingly.
+
 ---
 
 ## 🏁 How to Run Locally

@@ -2,8 +2,9 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm install
+RUN npm ci
 COPY frontend/ .
+ENV BACKEND_URL=http://localhost:3001
 
 # Inject build args for Next.js static site generation
 ARG NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyBf1Ryfr9HlE2AGBEY5koSpvkPexgsBMs0
@@ -25,7 +26,7 @@ RUN NEXT_PUBLIC_FIREBASE_API_KEY=$NEXT_PUBLIC_FIREBASE_API_KEY \
 FROM node:20-alpine AS backend-builder
 WORKDIR /app/backend
 COPY backend/package*.json ./
-RUN npm install
+RUN npm ci
 COPY backend/ .
 RUN npm run build
 
@@ -48,6 +49,8 @@ COPY --from=frontend-builder /app/frontend/public ./frontend/public
 
 # Configure internal routing
 ENV NODE_ENV=production
+ENV PORT=8080
 ENV BACKEND_URL=http://localhost:3001
+EXPOSE 8080
 
 CMD ["concurrently", "\"PORT=3001 node backend/dist/index.js\"", "\"node frontend/server.js\""]
