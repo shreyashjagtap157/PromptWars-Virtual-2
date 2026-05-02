@@ -62,15 +62,40 @@ export const swaggerDocument = {
       }
     },
     "/translate": {
-      "get": {
-        "summary": "Translate text (mock Google Translate)",
-        "parameters": [
-          { "in": "query", "name": "text", "required": true, "schema": { "type": "string" } },
-          { "in": "query", "name": "targetLanguage", "required": true, "schema": { "type": "string", "example": "es" } }
-        ],
+      "post": {
+        "summary": "Translate text using Google Cloud Translation API",
+        "description": "Translates input text to the specified target language. High-performance caching is implemented to reduce latency and API costs.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text", "targetLanguage"],
+                "properties": {
+                  "text": { "type": "string", "example": "Hello, how are you?" },
+                  "targetLanguage": { "type": "string", "example": "hi", "description": "ISO 639-1 language code" }
+                }
+              }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "Translated text response" },
-          "400": { "description": "Missing required parameters" }
+          "200": { 
+            "description": "Translation successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "translation": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Invalid input parameters" },
+          "429": { "description": "Too many requests" }
         }
       }
     },

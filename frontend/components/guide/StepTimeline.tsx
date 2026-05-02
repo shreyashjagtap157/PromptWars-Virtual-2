@@ -99,7 +99,10 @@ export function StepTimeline() {
   }
   
   return (
-    <div className="flex flex-col relative before:absolute before:inset-y-0 before:left-8 before:w-[2px] before:bg-gradient-to-b before:from-primary/20 before:via-outline-variant/30 before:to-transparent mt-8">
+    <div 
+      className="flex flex-col relative before:absolute before:inset-y-0 before:left-8 before:w-[2px] before:bg-gradient-to-b before:from-primary/20 before:via-outline-variant/30 before:to-transparent mt-8"
+      aria-label="Election roadmap steps"
+      role="list">
       {stepsWithStatus.map((step, index) => {
         const isCompleted = step.status === 'completed';
         const isActive = step.status === 'active';
@@ -111,9 +114,15 @@ export function StepTimeline() {
         const description = rawTranslatedDesc === `${step.id}_desc` ? step.description : rawTranslatedDesc;
 
         return (
-          <div key={step.id} className="relative pl-20 pb-10 group animate-in slide-in-from-bottom-4 duration-500" style={{ animationDelay: `${index * 50}ms` }}>
+          <div 
+            key={step.id} 
+            className="relative pl-20 pb-10 group animate-in slide-in-from-bottom-4 duration-500" 
+            style={{ animationDelay: `${index * 50}ms` }}
+            role="listitem">
              {/* Timeline Marker */}
-            <div className={`absolute left-4 top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center bg-surface transition-all duration-500 z-10 ${isCompleted ? 'border-secondary bg-secondary/20 text-secondary' : isActive ? 'border-primary shadow-[0_0_0_6px_var(--color-primary-container)] text-primary scale-110' : 'border-outline-variant text-outline-variant'}`}>
+            <div 
+              className={`absolute left-4 top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center bg-surface transition-all duration-500 z-10 ${isCompleted ? 'border-secondary bg-secondary/20 text-secondary' : isActive ? 'border-primary shadow-[0_0_0_6px_var(--color-primary-container)] text-primary scale-110' : 'border-outline-variant text-outline-variant'}`}
+              aria-hidden="true">
               {isCompleted ? (
                  <span className="material-symbols-outlined text-[18px]">check</span>
               ) : (
@@ -126,29 +135,35 @@ export function StepTimeline() {
                
                {/* Card Header */}
                <div className="px-8 py-6 border-b border-outline-variant/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                 <div>
+                 <div aria-live="polite">
                    <div className="flex items-center gap-3 mb-1.5 flex-wrap">
                       <h3 className={`font-h3 text-xl font-bold tracking-tight ${isActive ? 'text-primary' : 'text-on-surface'}`}>{title}</h3>
                       {isActive && (
                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-error text-on-error shadow-sm shadow-error/30 animate-pulse-slow">{t('guide_action_needed')}</span>
                       )}
                       {isCompleted && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-secondary-container text-on-secondary-container">{t('guide_verified')}</span>
+                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-widest uppercase bg-secondary-container text-on-secondary-container">{t('guide_verified')}</span>
                       )}
                    </div>
                    <p className="font-label-caps text-[11px] text-on-surface-variant flex items-center gap-2 uppercase tracking-wide opacity-70">
-                      <span className="material-symbols-outlined text-[14px]">verified_user</span>
+                      <span className="material-symbols-outlined text-[14px]" aria-hidden="true">verified_user</span>
                       {region?.country || 'General'} Election Protocol
                    </p>
                  </div>
                  
                  <div className="shrink-0 flex items-center gap-2">
+                    {/* Screen reader only status */}
+                    <span className="sr-only">
+                      {isCompleted ? 'Step completed' : isActive ? 'Current active step' : 'Step pending'}
+                    </span>
+
                    {/* Clickable "I have completed this" */}
                    {!isCompleted && (
                      <button 
                        onClick={() => updateGuideProgress(step.id, 'completed', title)}
-                       className="bg-primary text-on-primary px-5 py-2.5 rounded-xl font-button text-sm hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
-                       <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                       aria-label={`Mark "${title}" as completed`}
+                       className="bg-primary text-on-primary px-5 py-2.5 rounded-xl font-button text-sm hover:translate-y-[-2px] hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center gap-2 active:scale-95 cursor-pointer focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                       <span className="material-symbols-outlined text-[18px]" aria-hidden="true">check_circle</span>
                        {t('guide_completed_btn')}
                      </button>
                    )}
@@ -157,9 +172,10 @@ export function StepTimeline() {
                    {isCompleted && (
                      <button 
                        onClick={() => updateGuideProgress(step.id, 'pending', title)}
+                       aria-label={`Undo completion of "${title}"`}
                        title="Undo completion"
-                       className="bg-surface-container-high text-on-surface-variant px-4 py-2.5 rounded-xl font-button text-sm hover:bg-surface-container-highest transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
-                       <span className="material-symbols-outlined text-[18px]">undo</span>
+                       className="bg-surface-container-high text-on-surface-variant px-4 py-2.5 rounded-xl font-button text-sm hover:bg-surface-container-highest transition-all flex items-center gap-2 active:scale-95 cursor-pointer focus:ring-2 focus:ring-outline focus:ring-offset-2">
+                       <span className="material-symbols-outlined text-[18px]" aria-hidden="true">undo</span>
                        {t('guide_undo_btn') || 'Undo'}
                      </button>
                    )}
@@ -174,7 +190,9 @@ export function StepTimeline() {
                  
                  <div className="flex items-center justify-between gap-4">
                     <ReaderControls text={description} />
-                    <div className="text-[10px] font-bold text-on-surface-variant opacity-50">{t('guide_step_of', { curr: index + 1, total: steps.length })}</div>
+                    <div className="text-[10px] font-bold text-on-surface-variant opacity-50" aria-label={`Step ${index + 1} of ${steps.length}`}>
+                      {t('guide_step_of', { curr: index + 1, total: steps.length })}
+                    </div>
                  </div>
                </div>
             </div>

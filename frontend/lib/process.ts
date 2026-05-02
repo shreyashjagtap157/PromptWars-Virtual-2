@@ -1,3 +1,4 @@
+// Synchronized with shared/types.ts for architectural consistency
 export interface ProcessStep {
     id: string;
     title: string;

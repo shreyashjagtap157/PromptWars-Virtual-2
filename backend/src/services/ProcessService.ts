@@ -1,3 +1,11 @@
+import fs from 'fs';
+import path from 'path';
+
+// Load roadmap data synchronously
+// Note: Using path.join with __dirname is safe here as we are in a CommonJS-compatible build environment
+const roadmapPath = path.join(__dirname, '..', 'data', 'roadmaps.json');
+const roadmapData = JSON.parse(fs.readFileSync(roadmapPath, 'utf8'));
+
 interface Step {
     id: string;
     title: string;
@@ -7,56 +15,8 @@ interface Step {
 
 interface ProcessResponse {
     mode: "general" | "region-specific";
-    steps: ReadonlyArray<Step>;
+    steps: Step[];
 }
-
-const INDIA_PROCESS: ProcessResponse = {
-    mode: "region-specific",
-    steps: [
-        { id: "in-1", title: "Verify Name on voters.eci.gov.in", description: "Verify your Part Number, Serial Number, and Voter ID status on the official ECI portal. Ensure your name does not have a 'Deleted' flag.", order: 1 },
-        { id: "in-2", title: "Download Official Voter Information Slip", description: "Download your digital voter slip, which contains your polling booth details, room number, and local precinct identifiers.", order: 2 },
-        { id: "in-3", title: "Download Digital EPIC (Voter ID)", description: "Download your e-EPIC from the portal. Please note that 11 other government IDs, such as an Aadhaar Card or Passport, are also valid for entry.", order: 3 },
-        { id: "in-4", title: "Locate Polling Booth via Maps", description: "Identify the location of the school or government building designated as your polling booth. We recommend planning a morning visit to avoid the heat and long queues.", order: 4 },
-        { id: "in-5", title: "Check Candidates on KYC App", description: "Install the official 'Know Your Candidate' (KYC) app to review the criminal records, assets, and liabilities of all candidates contesting in your area.", order: 5 },
-        { id: "in-6", title: "Queue Management & Initial Verification", description: "Stand in the designated queue when you arrive. Keep your valid ID and Voter Slip ready for the initial verification at the entrance.", order: 6 },
-        { id: "in-7", title: "First Polling Officer: Identity Verification", description: "The First Polling Officer will check your name against the marked copy of the electoral roll and verify your photo identity.", order: 7 },
-        { id: "in-8", title: "Second Polling Officer: Form 17A Signature", description: "The Second Polling Officer will record your details in Form 17A (the Register of Voters) and take either your signature or thumb impression.", order: 8 },
-        { id: "in-9", title: "Indelible Ink Application", description: "The Second Polling Officer will apply indelible violet ink to your left index finger. Do not wipe it off, as it must dry to serve as legal proof of your vote.", order: 9 },
-        { id: "in-10", title: "Third Polling Officer: EVM Activation", description: "The Third Polling Officer will collect your voter slip and press the 'Ballot' button on the Control Unit to activate the Electronic Voting Machine (EVM) for you.", order: 10 },
-        { id: "in-11", title: "Cast Your Ballot (EVM)", description: "Enter the private voting cubicle. Press the blue button on the Ballot Unit next to the name and symbol of the candidate of your choice.", order: 11 },
-        { id: "in-12", title: "VVPAT Window Verification", description: "Observe the VVPAT window for 7 seconds. A paper slip displaying your corresponding choice will appear, remain visible, and then automatically drop into the sealed box.", order: 12 },
-        { id: "in-13", title: "Exit and Selfie Point", description: "Follow the exit signs. You can visit the local selfie point outside the booth to celebrate fulfilling your civic duty and proudly show off your inked finger.", order: 13 }
-    ]
-};
-
-const USA_PROCESS: ProcessResponse = {
-    mode: "region-specific",
-    steps: [
-        { id: "us-1", title: "Secretary of State Portal Check", description: "Verify your voter registration status, party affiliation, and address at least 30 days before Election Day.", order: 1 },
-        { id: "us-2", title: "Study the Sample Ballot", description: "Carefully review and research all state measures, local propositions, and candidates. It is highly recommended to prepare your choices ahead of time.", order: 2 },
-        { id: "us-3", title: "Finalize Your Voting Method", description: "Choose whether you will vote by mail (by requesting an absentee ballot), participate in Early Voting, or vote in person on Election Day, depending on your state's protocols.", order: 3 },
-        { id: "us-4", title: "Obtain Valid Identification", description: "Secure the necessary identification documents, such as a REAL ID, utility bill, or Passport, in accordance with your local state's specific Voter ID laws.", order: 4 },
-        { id: "us-5", title: "Locate Your Designated Precinct", description: "Confirm the exact location of your polling precinct or official ballot drop-off box, as locations occasionally change due to redistricting.", order: 5 },
-        { id: "us-6", title: "Poll Worker Check-In", description: "State your legal name and address to the poll workers. They will verify your registration status, ask you to sign the poll book, and subsequently issue your ballot.", order: 6 },
-        { id: "us-7", title: "Mark Your Ballot in Privacy", description: "Use the officially provided marking device in the private voting booth. Fill in the circles or boxes completely. Do not use your own pen unless explicitly instructed to do so.", order: 7 },
-        { id: "us-8", title: "Review for Overvotes", description: "Double-check your ballot to ensure you haven't marked too many choices for any single race. If you make a mistake, request a replacement 'spoiled' ballot to start over.", order: 8 },
-        { id: "us-9", title: "Machine Submission", description: "Feed your completed paper ballot directly into the optical scanner. Wait for the 'Thank You' or 'Ballot Accepted' message to appear on the screen.", order: 9 },
-        { id: "us-10", title: "Collect Your Participation Sticker", description: "Collect your 'I Voted' sticker on your way out and proudly wear it to inspire others in your community to complete their civic duty.", order: 10 }
-    ]
-};
-
-const GENERAL_PROCESS: ProcessResponse = {
-    mode: "general",
-    steps: [
-        { id: "gen-1", title: "Eligibility Audit", description: "Verify that you meet all citizenship and age requirements under your local laws.", order: 1 },
-        { id: "gen-2", title: "Registration Process", description: "Submit your voter registration details before the official deadline.", order: 2 },
-        { id: "gen-3", title: "Platform Research", description: "Review the policies and voting records of the candidates.", order: 3 },
-        { id: "gen-4", title: "Logistics Confirmation", description: "Find your designated polling station and confirm its operating hours.", order: 4 },
-        { id: "gen-5", title: "Identity Preparation", description: "Gather all required government-issued photo identification.", order: 5 },
-        { id: "gen-6", title: "Cast Your Ballot", description: "Cast your ballot securely at the designated polling booth.", order: 6 },
-        { id: "gen-7", title: "Result Monitoring", description: "Check official sources for verified outcome reports.", order: 7 }
-    ]
-};
 
 function normalizeRegion(region?: string): string {
     return (region || '').toLowerCase().trim();
@@ -65,16 +25,16 @@ function normalizeRegion(region?: string): string {
 export class ProcessService {
     public static getProcessForRegion(region?: string): ProcessResponse {
         const cleanRegion = normalizeRegion(region);
-        console.log(`[ProcessService] Exhaustive Guide Engine executing for: "${cleanRegion}"`);
-
+        
+        // Dynamic region matching
         if (cleanRegion.includes('india')) {
-            return INDIA_PROCESS;
+            return roadmapData.india as ProcessResponse;
         }
 
         if (cleanRegion.includes('usa') || cleanRegion.includes('united states') || cleanRegion === 'us') {
-            return USA_PROCESS;
+            return roadmapData.usa as ProcessResponse;
         }
 
-        return GENERAL_PROCESS;
+        return roadmapData.general as ProcessResponse;
     }
 }

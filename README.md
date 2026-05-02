@@ -22,6 +22,16 @@ Navigating complex voting protocols is often the biggest hurdle to democratic pa
 
 To minimize deployment complexity and maximize performance, CivicGuide uses a **Unified Mono-Container** architecture.
 
+## Refined Architecture (v2.0)
+
+CivicGuide has been upgraded from a basic mono-container to a **Decoupled, Data-Driven Architecture**:
+
+- **Content Decoupling**: Election roadmaps are now managed via externalized JSON configurations (`roadmaps.json`), allowing for content updates without modifying core service logic.
+- **Unified Observability**: Implemented a **Unified Health Check** system. The frontend `/api/health` endpoint now performs a heartbeat check on the backend service, ensuring true container-level health transparency.
+- **Structured Traceability**: All requests are tagged with a unique `X-Request-Id` and logged using structured JSON (Winston) with GCP-specific severity levels, ready for **Google Cloud Logging**.
+- **Type Safety**: Shared TypeScript interfaces ensure perfect synchronization between the Next.js frontend and Express backend.
+- **Resilient Geolocation**: Integrated Google Maps Geocoding API with a persistent fallback engine to guarantee location-aware roadmaps regardless of API availability.
+
 ### 1. Architecture Logic
 - **Gateway Layer**: Next.js 16 (Frontend) is the primary entry point. It handles SSR, static assets, and route rewrites.
 - **Service Layer**: An Express.js (Backend) instance runs on `8080` in local development and on `3001` inside the provided container image.

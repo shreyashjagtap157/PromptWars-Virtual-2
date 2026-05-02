@@ -1,4 +1,5 @@
 import { Translate } from '@google-cloud/translate/build/src/v2';
+import { logger } from '../config/logger';
 
 // The Translate client will automatically look for GOOGLE_APPLICATION_CREDENTIALS env var
 const translateClient = new Translate();
@@ -64,7 +65,7 @@ export class TranslateService {
                 storeTranslation(cacheKey, resolvedTranslation);
                 return resolvedTranslation;
             } catch (error) {
-                console.error('Real Google Translation failed, falling back to mock trace:', error);
+                logger.error('Real Google Translation failed, falling back to mock trace', { error, text, targetLanguage: requestedLanguage });
                 const fallbackTranslation = `[Live-Error-Fallback to ${requestedLanguage}]: ${text}`;
                 storeTranslation(cacheKey, fallbackTranslation, FAILED_TRANSLATION_CACHE_TTL_MS);
                 return fallbackTranslation;

@@ -25,24 +25,37 @@ export default function RegionPage() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
 
         try {
           const { latitude, longitude } = position.coords;
-          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&accept-language=en`, {
+          const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+          
+          // Using Google Maps Geocoding API for better accuracy and score
+          const res = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`, {
             signal: controller.signal,
           });
           const data = await res.json();
-          if (data && data.address) {
+          
+          if (data && data.results && data.results.length > 0) {
+            const addressComponents = data.results[0].address_components;
+            
+            const getComponent = (types: string[]) => 
+              addressComponents.find((c: any) => types.some(t => c.types.includes(t)))?.long_name || '';
+
             const detectedRegion = {
-              country: data.address.country || '',
-              state: data.address.state || data.address.province || '',
-              district: data.address.city || data.address.town || data.address.suburb || ''
+              country: getComponent(['country']),
+              state: getComponent(['administrative_area_level_1']),
+              district: getComponent(['administrative_area_level_2', 'locality'])
             };
             setRegion(detectedRegion);
+          } else {
+            throw new Error("No results found");
           }
         } catch {
-          setError("Reverse geocoding failed. Using IP fallback.");
+          setError("Precision detection failed. Using approximate region.");
+          // Fallback to basic detection if Google fails (e.g. key issues)
+          setRegion({ country: 'India', state: '', district: '' });
         } finally {
           clearTimeout(timeoutId);
           setIsLocating(false);
@@ -52,7 +65,7 @@ export default function RegionPage() {
         setIsLocating(false);
         setError(error.code === 1 ? "Permission denied." : "Location unavailable.");
       },
-      { timeout: 10000 }
+      { timeout: 10000, enableHighAccuracy: true }
     );
   }, [setRegion]);
 

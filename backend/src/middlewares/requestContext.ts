@@ -9,6 +9,8 @@ declare global {
     }
 }
 
+import { logger } from '../config/logger';
+
 function normalizeRequestId(value: unknown): string {
     if (typeof value !== 'string') {
         return randomUUID();
@@ -30,7 +32,13 @@ export const requestContext = (req: Request, res: Response, next: NextFunction):
         }
 
         const durationMs = Date.now() - startedAt;
-        console.log(`[Request ${requestId}] ${req.method} ${req.originalUrl} -> ${res.statusCode} (${durationMs}ms)`);
+        logger.info(`${req.method} ${req.originalUrl} -> ${res.statusCode} (${durationMs}ms)`, {
+            requestId,
+            method: req.method,
+            url: req.originalUrl,
+            statusCode: res.statusCode,
+            durationMs,
+        });
     });
 
     next();

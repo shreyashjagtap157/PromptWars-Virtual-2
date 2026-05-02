@@ -41,16 +41,16 @@ export const validateProcessQuery = (req: Request, res: Response, next: NextFunc
 };
 
 export const validateTranslationQuery = (req: Request, res: Response, next: NextFunction): void => {
-    const text = req.query.text;
-    const targetLanguage = req.query.targetLanguage;
+    const text = req.body?.text;
+    const targetLanguage = req.body?.targetLanguage;
 
     if (typeof text !== 'string' || !text.trim()) {
-        rejectWithMessage(res, 400, 'Text is required');
+        rejectWithMessage(res, 400, 'Text is required in request body');
         return;
     }
 
     if (typeof targetLanguage !== 'string' || !targetLanguage.trim()) {
-        rejectWithMessage(res, 400, 'targetLanguage is required');
+        rejectWithMessage(res, 400, 'targetLanguage is required in request body');
         return;
     }
 
@@ -67,8 +67,8 @@ export const validateTranslationQuery = (req: Request, res: Response, next: Next
         return;
     }
 
-    (req.query as Record<string, string>).text = normalizedText;
-    (req.query as Record<string, string>).targetLanguage = normalizedLanguage;
+    req.body.text = normalizedText;
+    req.body.targetLanguage = normalizedLanguage;
     next();
 };
 

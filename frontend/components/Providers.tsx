@@ -24,6 +24,24 @@ function ThemeSync() {
   return null;
 }
 
+function LanguageSync() {
+  const language = useStore((state) => state.language);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      // Map BCP47 locales to primary language tags
+      const langMap: Record<string, string> = {
+        'en-US': 'en',
+        'hi-IN': 'hi',
+        'mr-IN': 'mr'
+      };
+      document.documentElement.lang = langMap[language] || 'en';
+    }
+  }, [language]);
+
+  return null;
+}
+
 function SyncWrapper({ children }: { children: React.ReactNode }) {
   useSyncStore();
   return <>{children}</>;
@@ -33,6 +51,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
       <ThemeSync />
+      <LanguageSync />
       <SyncWrapper>
         {children}
       </SyncWrapper>

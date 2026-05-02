@@ -9,11 +9,14 @@ import { errorHandler } from './middlewares/errorHandler';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerDocument } from './swagger';
 import { requestContext } from './middlewares/requestContext';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+const isProduction = process.env.NODE_ENV === 'production';
 
 function collectAllowedOrigins(): Set<string> {
     const origins = new Set<string>([
@@ -63,21 +66,33 @@ const corsOptions: CorsOptions = {
     maxAge: 600,
 };
 
-app.disable('x-powered-by');
-app.set('trust proxy', 1);
-app.use(requestContext);
-app.use((req, res, next) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('X-Frame-Options', 'DENY');
-    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+// Security Hardening
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://www.googletagmanager.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            imgSrc: ["'self'", "data:", "https://*"],
+            connectSrc: ["'self'", "https://nominatim.openstreetmap.org", "https://*.googleapis.com", "https://www.google-analytics.com"],
+        },
+    },
+}));
 
-    if (process.env.NODE_ENV === 'production') {
-        res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains');
-    }
-
-    next();
+// Rate Limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per `window`
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' }
 });
+
+app.use('/api/', limiter); // Apply to API routes
+app.set('trust proxy', 1);
+
+app.use(requestContext);
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 app.use(express.json({ limit: '1mb' }));
