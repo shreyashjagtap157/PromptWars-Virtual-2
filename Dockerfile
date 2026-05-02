@@ -40,6 +40,7 @@ RUN npm install -g concurrently
 # Copy Backend
 COPY --from=backend-builder /app/backend/dist ./backend/dist
 COPY --from=backend-builder /app/backend/node_modules ./backend/node_modules
+COPY --from=backend-builder /app/backend/src/data ./backend/dist/data
 COPY backend/package.json ./backend/
 
 # Copy Frontend

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans_Devanagari } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Navbar } from "@/components/layout/Navbar";
@@ -8,9 +8,15 @@ import { Providers } from "@/components/Providers";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
 const inter = Inter({
-  subsets: ["latin", "devanagari"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
+});
+
+const notoDevanagari = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  display: "swap",
+  variable: "--font-noto-devanagari",
 });
 
 export const metadata: Metadata = {
@@ -40,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${notoDevanagari.variable}`} suppressHydrationWarning>
       <body className="bg-background text-on-background font-body-md antialiased selection:bg-primary selection:text-on-primary min-h-screen">
         <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_ID || ""} />
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-6 focus:py-3 focus:bg-primary focus:text-on-primary focus:rounded-xl focus:font-bold focus:shadow-2xl">

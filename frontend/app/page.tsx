@@ -1,5 +1,11 @@
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeatureCards } from "@/components/landing/FeatureCards";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'CivicGuide | Your Ultimate Election Roadmap',
+  description: 'Exhaustive, location-aware election protocols and guides for India and the USA. Accessible, multilingual, and verified.',
+};
 
 export default function LandingPage() {
   return (
