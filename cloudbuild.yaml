@@ -1,0 +1,8 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '--target', 'frontend-builder', '-t', 'gcr.io/gen-lang-client-0949773976/promptwars-virtual-2:frontend', 'frontend/']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '--target', 'backend-builder', '-t', 'gcr.io/gen-lang-client-0949773976/promptwars-virtual-2:backend', 'backend/']
+
+images:
+  - 'gcr.io/gen-lang-client-0949773976/promptwars-virtual-2:latest'
